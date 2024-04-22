@@ -1,0 +1,139 @@
+.container {
+    padding: 200px 300px 35px 300px;
+    margin:0px 100px;
+    display: flex;
+    flex-direction: column;
+}
+
+.error{
+    text-align: center;
+    margin-top: 40px;
+    margin-bottom: 40px;
+    font-weight: bold;
+}
+
+.errorDescription{
+    text-align: center;
+    font-weight: bold;
+}
+
+.arrow{
+    position: absolute;
+    left: 300px;
+    top: 212px
+}
+
+.arrow img{
+    width: 50px;
+}
+
+.postInfo{
+    display: flex;
+    justify-content: space-between;
+}
+
+.userInfo{
+    display: flex;
+}
+
+.avatar img{
+    width: 50px;
+    border-radius: 50%;
+}
+
+.postUsername{
+    position: relative;
+    top:17px;
+    left:15px;
+}
+
+.pubDate{
+    position: relative;
+    top:17px;
+}
+
+.title{
+    text-align: start;
+    margin-top: 15px;
+}
+
+.postBody{
+    margin-top: 15px;
+    word-wrap: break-word;
+    overflow: hidden; 
+    text-align: justify;
+}
+
+.interactions{
+    display: flex;
+    margin: 25px 0px 25px 0px;
+}
+
+.likes{
+    display: flex;
+    margin-right: 30px;
+    width: 70px;
+}
+
+.heart img{
+    width: 25px;
+}
+
+.number{
+    position: relative;
+    top:5px;
+    left:10px;
+}
+
+.save img{
+    width: 25px;
+    margin-right: 70px;
+}
+
+.comments{
+    display: flex;
+    margin-right: 30px;
+    width: 70px;
+}
+
+.comments img{
+    width: 25px;
+}
+
+.delete img{
+    width: 25px;
+}
+
+.commentBox{
+    flex-direction: column;
+    box-sizing: content-box;
+}
+
+.commentButton{
+    align-self: self-end;
+    margin: 10px 0px 15px 0px;
+    width: 100px;
+}
+
+.loginButton{
+    align-self: self-start;
+    margin: 10px 0px 30px 0px;
+    padding: 15px 5px;
+    width: 200px;
+    border-radius: 50px;
+}
+
+.order{
+    margin-bottom: 30px;
+}
+
+.comment{
+    margin-top: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px grey solid;
+}
+
+.comment .postBody{
+    margin-bottom: 25px;
+}
+

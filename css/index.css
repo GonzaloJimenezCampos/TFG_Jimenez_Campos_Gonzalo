@@ -1,0 +1,466 @@
+body::-webkit-scrollbar {
+    display: none;
+}
+
+/* body {
+    -ms-overflow-style: none;  IE and Edge 
+    scrollbar-width: none;  Firefox 
+} */
+
+a {
+    color: black;
+}
+
+.container {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    padding: 200px 0px 35px 0px;
+}
+
+.pageSelector {
+    display: flex;
+    justify-content: center;
+}
+
+.pageOption {
+    margin: 0 10px;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-bottom: 2px solid transparent;
+}
+
+.pageOption.active {
+    border-color: #000;
+    /* Color de la línea inferior activa */
+    background-color: transparent;
+}
+
+.carrousel {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+.pages {
+    display: flex;
+    transition: transform 0.5s ease;
+}
+
+.page {
+    flex: 0 0 100%;
+}
+
+.active {
+    background-color: #ccc;
+}
+
+
+.logo {
+    margin-top: 100px;
+}
+
+.logo img {
+    width: 300px;
+}
+
+.summonerSearch {
+    margin-top: 100px;
+}
+
+.analysesRecords {
+    margin: 0 auto;
+    margin-top: 100px;
+    width: 700px;
+    text-align: center;
+}
+
+.analysis {
+    display: flex;
+    margin: 15px 0px;
+    background-color: rgb(209, 209, 209);
+    height: 100px;
+}
+
+.summonerInfo {
+    flex: 0.2;
+    align-content: center;
+    margin-left: 30px;
+}
+
+.summonerAvatar {}
+
+.summonerAvatar img {
+    width: 50px;
+    height: 50px;
+}
+
+.summonerName {}
+
+.analysisSubcategories {
+    flex: 0.6;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    padding-top: 20px;
+}
+
+.icon img {
+    width: 25px;
+    height: 25px;
+}
+
+.score {
+    width: 25px;
+    height: 25px;
+}
+
+.analysisScore {
+    flex: 0.2;
+    align-content: center;
+}
+
+.analysisScore .icon img {
+    width: 50px;
+    height: 50px;
+}
+
+.analysisScore .score {
+    width: auto;
+    height: auto;
+}
+
+.popupContainer {
+    display: none;
+    position: fixed;
+    top: 320px;
+    left: 150%;
+    transform: translate(-50%, -50%);
+    width: 33%;
+    height: 550px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    z-index: 1000;
+}
+
+.blur {
+    filter: blur(4px);
+}
+
+.popupContent {
+    position: relative;
+    height: 10%;
+}
+
+.closePopup {
+    position: absolute;
+    top: 1px;
+    right: 0px;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.postForm {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+}
+
+.postForm label,
+.postForm input,
+.postForm textarea,
+.postForm button {
+    margin-bottom: 20px;
+}
+
+.postForm input,
+.postForm textarea {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.tagsPack{
+    display: flex;
+    align-content: center;
+}
+
+.selectedTags{
+    display: flex;
+    margin-left: 30px;
+}
+
+.selectedTag{
+    background-color: #ccc;
+    padding: 5px 15px;
+    margin-left: 10px;
+    height: 18px;
+    border-radius: 50px;
+}
+
+.tags{
+    width: 120px;
+}
+
+.autocomplete {
+    position: relative;
+}
+.autocomplete-items {
+    position: absolute;
+    background-color: #f1f1f1;
+    border: 1px solid #d4d4d4;
+    top: 210px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 99;
+}
+.autocomplete-item {
+    padding: 5px 10px;
+    cursor: pointer;
+}
+.autocomplete-item:hover {
+    background-color: #e9e9e9;
+}
+
+.postForm textarea{
+    resize: none;
+    font-family: 'Karla', sans-serif;
+    height: 220px;
+}
+
+.postForm button {
+    padding: 8px 16px;
+    background-color: #aaaaaa;
+    border: none;
+    cursor: pointer;
+    border-radius: 50px;
+}
+
+
+.postHeader {
+    display: flex;
+    width: 1300px;
+    margin: 0 auto;
+    justify-content: space-between;
+}
+
+.postSearch {
+    display: flex;
+    flex-direction: column;
+    margin-top: 70px;
+    align-items: baseline;
+}
+
+.titleSearch{
+    display: flex;
+    align-items: baseline;
+}
+
+.titlePost{
+}
+
+.postName {
+
+}
+
+.postSearch input {
+    width: 400px;
+    margin-bottom: 7px;
+}
+
+.autocomplete-posts{
+    position: absolute;
+    overflow: hidden;
+    text-align: start;
+    width: 400px;
+    background-color: #f1f1f1;
+    border: 1px solid #d4d4d4;
+    top: 90px;
+    max-height: 1000px;
+    z-index: 99;
+}
+
+.autocomplete-post{
+    padding: 10px;
+    cursor: pointer;
+}
+
+.autocomplete-post:hover {
+    background-color: #ddd;
+}
+
+.searchParameters {
+    margin-top: 7px;
+    display: flex;
+}
+
+.order {
+    margin-right: 30px;
+}
+
+.dateLimit {
+
+}
+
+.arrow img{
+    width: 50px;
+}
+
+.seeSaved{
+    position: relative;
+    left: 220px;
+    margin-top: 70px;
+    align-items: baseline;
+}
+
+.savedButton{
+    margin: 10px 0px 15px 0px;
+    padding: 15px 5px;
+    width: 150px;
+    border-radius: 50px;
+}
+
+.seeMyPosts{
+    position: relative;
+    left: 110px;
+    margin-top: 70px;
+    align-items: baseline;
+}
+
+.myPostsButton{
+    margin: 10px 0px 15px 0px;
+    padding: 15px 5px;
+    width: 150px;
+    border-radius: 50px;
+}
+
+.createPost {
+    margin-top: 70px;
+    align-items: baseline;
+}
+
+.postButton {
+    margin: 10px 0px 15px 0px;
+    padding: 15px 5px;
+    width: 150px;
+    border-radius: 50px;
+}
+
+.posts {
+    margin: 0 auto;
+    width: 1300px;
+    display: flex;
+    flex-direction: column;
+    align-content: baseline;
+}
+
+.post {
+    position: relative;
+    text-align: start;
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(177, 177, 177);
+    margin: 10px 0px;
+
+}
+
+.postInfo {
+    display: flex;
+    margin: 15px 30px 0px 20px;
+    justify-content: space-between;
+}
+
+.userInfo {
+    display: flex;
+    width: 100px;
+}
+
+.avatar img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
+
+.postUsername {
+    position: relative;
+    top: 17px;
+    left: 15px;
+}
+
+.postTags{
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    margin-bottom: 2px;
+    margin-left: 30px;
+}
+
+.postTag{
+    background-color: #ccc;
+    text-align: center;
+    padding: 5px 15px;
+    margin-right: 10px;
+    height: 18px;
+    border-radius: 50px;
+}
+
+.pubDate {
+    position: relative;
+    top: 17px;
+}
+
+.title {
+    text-align: start;
+    margin-left: 25px;
+    margin-top: 15px;
+}
+
+.postBody {
+    margin: 10px 25px 0px 25px;
+    word-wrap: break-word;
+    overflow: hidden;
+}
+
+.interactions {
+    display: flex;
+    margin: 25px 0px 25px 25px
+}
+
+.likes {
+    display: flex;
+    margin-right: 30px;
+    width: 70px;
+}
+
+.heart img {
+    width: 25px;
+}
+
+.number {
+    position: relative;
+    top: 5px;
+    left: 10px;
+}
+
+.save img {
+    width: 25px;
+    margin-right: 70px;
+}
+
+.comments{
+    display: flex;
+    margin-right: 30px;
+    width: 70px;
+}
+
+.comment img{
+    width: 25px;
+}
+
+.delete img {
+    width: 25px;
+}

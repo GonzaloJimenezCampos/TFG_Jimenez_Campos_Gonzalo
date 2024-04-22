@@ -1,0 +1,194 @@
+.container {
+    text-align: center;
+    display: block;
+    padding: 250px 130px 35px 100px;
+}
+
+.pageSelector{
+    display: flex;
+    justify-content: center;
+}
+
+.pageOption{
+    margin: 0px 100px;
+    padding: 5px 10px;
+    color: black;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+}
+
+.pageOption.active {
+    border-color: #000;
+    /* Color de la línea inferior activa */
+    background-color: transparent;
+}
+
+.allInfo{
+    display: flex;
+    margin-top: 100px;
+    justify-content: center;
+}
+
+.userAvatarAndName{
+    margin-top: 60px;
+    display: block;
+    margin-right: 400px;
+    position: absolute;
+}
+
+.avatar img{
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+}
+
+.username{
+    position: relative;
+    text-align: center;
+    top: 30px;
+    left: 3px;
+}
+
+.carrousel {
+    display: flex;
+    flex-direction: column; /* Cambio añadido */
+}
+
+.profileSettings{
+    position: relative;
+    left: 50px;
+    display: flex;
+    justify-content: center;
+}
+
+.profileSettings:first-child{
+    position: relative;
+    left: 200px;
+}
+
+.profileInfo{
+    display: flex;
+    flex-direction: column;
+}
+
+.label{
+    text-align: left;
+    margin: 20px 0px;
+}
+
+input{
+    width: 150px;
+}
+
+.avatarOptions{
+    display: flex;
+}
+
+.avatarButton{
+    background-color: #165251;
+    color: #E1F2F2;
+    padding: 10px 20px;
+    border-radius: 12px;
+    margin-right: 30px;
+}
+
+.logOutButton{
+    text-align: center;
+    background-color: #c41700;
+    color: #E1F2F2;
+    padding: 20px 0px;
+    margin: 40px 80px 0px 0px;
+    border-radius: 12px;
+}
+
+.accountDropDown{
+    cursor: pointer;
+    margin-left: 135px;
+    color: #000000;
+    padding: 0px 40px;
+    border-radius: 12px;
+    margin-bottom: 50px;
+}
+
+
+.passwordInputs{
+    margin-left: 135px;
+    margin-bottom: 40px;
+}
+
+.passwordInput{
+    margin: 20px 0px;
+}
+
+.accountButton{
+    cursor: pointer;
+    margin-left: 135px;
+    background-color: #165251;
+    color: #E1F2F2;
+    padding: 20px 40px;
+    border-radius: 12px;
+    margin-bottom: 50px;
+}
+
+.inbox {
+    width: 500px; /* Ancho fijo del contenedor */
+    position: relative;
+    left: 100px;
+    height: 480px; /* Altura fija del contenedor */
+    overflow-y: auto; /* Permite desplazamiento vertical */
+    border: 1px solid #ccc; /* Borde para visualización */
+  }
+
+  .inbox::-webkit-scrollbar {
+    display: none; /* Oculta la barra de desplazamiento */
+  }
+  
+  
+  .message {
+    padding: 10px;
+    border-bottom: 1px solid #eee; /* Borde entre mensajes */
+  }
+
+  .author{
+    text-align: center;
+    display: flex;
+    align-content: center;
+    justify-content: space-between;
+  }
+
+  .senderInfo{
+    display: flex;
+  }
+
+  .profileImg img{
+    width: 40px;
+    border-radius: 50%;
+  }
+  
+  .senderUser{
+    align-content: center;
+    margin-left: 10px ;
+    margin-bottom: 2px;
+  }
+
+  .date{
+    align-content: center;
+    margin-bottom: 2px;
+  }
+
+  .content{
+    text-align: left;
+    margin-top: 15px;
+    margin-left: 5px;
+  }
+
+  .isRead{
+    margin-top: 15px;
+    display: flex;
+    align-items: center;
+  }
+
+  .isRead input{
+    text-align: left;
+    width: auto;
+  }
