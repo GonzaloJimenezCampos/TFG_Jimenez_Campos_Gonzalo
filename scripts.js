@@ -601,22 +601,30 @@ function addTag(tag) {
   var tagContainer = document.getElementById('selectedTags');
   var selectedTags = tagContainer.getElementsByClassName('selectedTag');
 
-  // Verificar si ya hay tres tags seleccionados
-  if (selectedTags.length >= 3) {
-    alert('¡Ya has seleccionado tres tags!');
+  var tagAlreadyExists = Array.from(selectedTags).some(function (selectedTag) {
+    return selectedTag.textContent === tag;
+  });
+
+  if (tagAlreadyExists) {
+    alert('This tag has alredy been selected for this post');
   } else {
-    var newTag = document.createElement('div');
-    newTag.className = 'selectedTag';
-    newTag.textContent = tag;
+    // Verificar si ya hay tres tags seleccionados
+    if (selectedTags.length >= 3) {
+      alert('The maximum number of tags for post is 3');
+    } else {
+      var newTag = document.createElement('div');
+      newTag.className = 'selectedTag';
+      newTag.textContent = tag;
 
-    // Agrega un event listener para eliminar el tag al hacer clic en él
-    newTag.addEventListener('click', function () {
-      this.parentNode.removeChild(this); // Elimina este elemento cuando se hace clic en él
-    });
+      // Agrega un event listener para eliminar el tag al hacer clic en él
+      newTag.addEventListener('click', function () {
+        this.parentNode.removeChild(this); // Elimina este elemento cuando se hace clic en él
+      });
 
-    var tagContainer = document.getElementById('selectedTags');
+      var tagContainer = document.getElementById('selectedTags');
 
-    tagContainer.appendChild(newTag);
+      tagContainer.appendChild(newTag);
+    }
   }
 }
 
@@ -710,12 +718,12 @@ function markRead(element) {
   messageId = element.getAttribute("message-id");
   messageStatus = element.getAttribute("message-status");
   var xhr = new XMLHttpRequest();
-  xhr.open('GET', 'change_read_status.php?message=' + messageId +'&status=' + messageStatus, true);
+  xhr.open('GET', 'change_read_status.php?message=' + messageId + '&status=' + messageStatus, true);
   xhr.onreadystatechange = function () {
     if (xhr.readyState === 4 && xhr.status === 200) {
-      if (messageStatus==0){
+      if (messageStatus == 0) {
         element.setAttribute("message-status", 1)
-      }else{
+      } else {
         element.setAttribute("message-status", 0)
       }
     }
