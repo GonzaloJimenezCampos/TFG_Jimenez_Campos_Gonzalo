@@ -1,0 +1,62 @@
+/*Vista Desktop*/
+body {
+    font-family: 'Karla', sans-serif;
+}
+
+h1{
+    font-size: 36px;
+}
+
+h2{
+    font-size: 24px;
+}
+
+p{
+    font-size: 14px;
+}
+
+.headerContainer {
+    background-color: #8d4d4d;
+    min-height: 100px;
+    width: 100%;
+    position: fixed;
+    z-index: 1;
+}
+
+header {
+    margin: 0px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 150px;
+    padding: 0px 60px;
+}
+
+.username {
+    position: relative;
+    color: #141414;
+    right: 30px;
+    bottom: 40px;
+    font-weight: 700;
+}
+
+.notificationsNumber{
+    background-color: rgb(240, 38, 38);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    position: absolute;
+    margin-left: 120px;
+    top: 100px;
+}
+
+.logInHeaderButton{
+    background-color: #165251;
+    margin-left: 20px;
+    color: #E1F2F2;
+    padding: 10px 40px;
+    border-radius: 12px;
+}
