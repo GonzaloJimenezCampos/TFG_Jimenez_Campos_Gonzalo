@@ -6,6 +6,12 @@ $connection = connect($server, $serveruser, $serverpassword, $PDOoptions);
 $carrouselHeight = "900px";
 $pagesTransform = "0";
 
+if(isset($_GET["alert"])){
+    if($_GET["alert"] == "401Search"){
+        echo "<script> alert('Unathorized access to summoner search, access it correctly through the index form - Error 401') </script>";
+    }
+}
+
 if (isset($_GET["page"]) && $_GET["page"] == 1) {
     $carrouselHeight = "100%";
     $pagesTransform = "-100";
@@ -74,16 +80,14 @@ $stmt->execute();
                     </div>
                     <div class="logo"><img src="img/logo_placeholder.png" alt="FxLoL web logo"></div>
                     <div class="summonerSearch">
-                        <form action="summoner_search.php" method="POST">
-                            <select id="region" name="region">
-                                <option value="volvo">EUW</option>
-                                <option value="saab">NA</option>
-                                <option value="mercedes">EUE</option>
-                                <option value="audi">LAS</option>
-                            </select>
-                            <input type="text" name="summoner" id="summoner" placeholder="Summoner name + #Tag">
-                            <a href="analysis_settings.html">Temporal link to access analysis settings</a>
-                        </form>
+                        <select id="region" name="region">
+                            <option value="euw1">EUW</option>
+                            <option value="na1">NA</option>
+                            <option value="eune1">EUNE</option>
+                            <option value="la1">LAN</option>
+                            <option value="la2">LAS</option>
+                        </select>
+                        <input type="text" name="summoner" id="summoner" placeholder="Summoner name + #Tag" onkeypress="checkUserExistance(event)">
                     </div>
                     <div class="analysesRecords">
                         <div class="analysis">

@@ -730,3 +730,202 @@ function markRead(element) {
   };
   xhr.send();
 }
+
+function checkUserExistance(event) {
+  if (event.key === 'Enter') {
+    var usernameSearch = encodeURIComponent(event.target.value);
+    var regionCode = document.getElementById("region").value;
+    window.location.href = "analysis_settings.php?username=" + usernameSearch + "&regionCode=" + regionCode;
+  }
+}
+
+function autoCompleteChampion(element) {
+  // Obtener el valor del input y limpiar los espacios en blanco alrededor
+  var input = element.value.trim();
+
+  // Obtener el div de autocompletado
+  var autocompleteDiv = document.getElementById("autocomplete-champions");
+
+  if (input.length > 0) {
+    getJsonChampions(input, autocompleteDiv, element);
+  } else {
+    document.getElementById("autocomplete-champions").style.display = "none";
+  }
+}
+
+function getJsonChampions(input, autocompleteDiv, element) {
+  fetch('champion.json')
+    .then(response => {
+      // Verificar si la respuesta es correcta
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      // Parsear la respuesta como JSON y retornarla
+      return response.json();
+    })
+    .then(data => {
+      // El contenido del archivo JSON está disponible aquí como el objeto "data"
+      addChampions(data, input, autocompleteDiv, element);
+    })
+    .catch(error => {
+      // Manejar errores de red o de parseo del JSON
+      console.error('There was a problem with the fetch operation:', error);
+    });
+}
+
+function addChampions(data, input, autocompleteDiv, element) {
+  var champions = data["data"];
+  var selectedValue = document.getElementById("champion").value;
+  var selectedDivId = selectedValue + "Champions";
+
+  // Filtrar los campeones que empiezan con el texto del input
+  var suggestions = champions.filter(function (champion) {
+    return champion.toLowerCase().startsWith(input.toLowerCase());
+  });
+
+  // Limpiar el div de autocompletado
+  autocompleteDiv.innerHTML = "";
+
+  if (suggestions.length === 0) {
+    autocompleteDiv.style.display = "none"; // Ocultar el div si no hay sugerencias
+  } else {
+    // Mostrar las sugerencias, pero solo las primeras 5
+    suggestions.slice(0, 5).forEach(function (champion) {
+      // Verificar si el campeón ya está seleccionado en alguno de los divs
+      var alreadySelected = document.querySelectorAll('#' + selectedDivId + ' img[src="img/champion/' + champion.replace("'", "").replace(" ", "") + '.png"]').length > 0;
+
+      if (!alreadySelected) {
+        var suggestion = document.createElement("div");
+        suggestion.textContent = champion;
+        suggestion.addEventListener("click", function () {
+          // Crear una imagen con el src del campeón seleccionado
+          var championImage = document.createElement("img");
+          championImage.src = "img/champion/" + champion.replace("'", "").replace(" ", "") + ".png"; // Ajusta la ruta de la imagen según sea necesario
+
+          // Crear un div para la imagen y agregar la imagen
+          var championDiv = document.createElement("div");
+          championDiv.classList.add("selectedChampion");
+          championDiv.appendChild(championImage);
+
+          // Agregar el div al div existente con id correspondiente al valor del select
+          var selectedChampionDiv = document.getElementById(selectedDivId);
+          selectedChampionDiv.appendChild(championDiv);
+
+          // Agregar evento de clic al div de la imagen para borrarlo
+          championDiv.addEventListener("click", function () {
+            selectedChampionDiv.removeChild(championDiv);
+          });
+
+          // Ocultar el div de autocompletado después de seleccionar una sugerencia
+          autocompleteDiv.style.display = "none";
+        });
+        autocompleteDiv.appendChild(suggestion);
+        autocompleteDiv.style.display = "block"; // Mostrar el div si hay sugerencias
+      }
+    });
+  }
+}
+
+
+function toggleChampionDiv() {
+  var selectedValue = document.getElementById("champion").value;
+  var selectedDivId = selectedValue + "Champions";
+  document.getElementById("championInput").value = "";
+
+  // Ocultar todos los divs de campeones
+  var allChampionDivs = document.querySelectorAll(".selectedChampions");
+  allChampionDivs.forEach(function (div) {
+    div.style.display = "none";
+  });
+
+  // Mostrar el div correspondiente al valor seleccionado en el select
+  var selectedChampionDiv = document.getElementById(selectedDivId);
+  if (selectedChampionDiv) {
+    selectedChampionDiv.style.display = "flex";
+  }
+}
+
+function toggleActive(button) {
+  var isActive = button.getAttribute("active");
+  if (isActive == "0") {
+    button.style.backgroundColor = "#165251"; // Cambiar el color de fondo a #165251 si active es true
+  } else {
+    button.style.backgroundColor = "red"; // Cambiar el color de fondo a rojo si active es false
+  }
+  button.setAttribute("active", (isActive - 1) * -1);
+  isAnalysisReady();
+}
+
+function hoverRole(element) {
+  element.src = "img/roles/" + element.role + "-hover.png";
+}
+
+function unhoverRole(element) {
+  element.src = "img/roles/" + element.role + ".png";
+}
+
+
+function selectRole(element) {
+  if (element.getAttribute("selected") === "true") {
+    element.style.backgroundColor = "transparent";
+    element.setAttribute("selected", "false");
+  } else {
+    element.style.backgroundColor = "#d4d4d4";
+    element.setAttribute("selected", "true");
+  }
+}
+
+function isAnalysisReady() {
+  numberMatches = document.getElementById("numberMatches").value;
+  soloQueue = document.getElementById("soloButton").getAttribute("active");
+  flexQueue = document.getElementById("flexButton").getAttribute("active");
+  button = document.getElementById("analysisButton");
+  if ((numberMatches > 0 && numberMatches < 21) && (soloQueue == "1" || flexQueue == "1")) {
+    button.setAttribute("onclick", "getSettingsInfo()");
+  } else {
+    button.setAttribute("onclick", "");
+  }
+}
+
+function getSettingsInfo() {
+  numberMatches = document.getElementById("numberMatches").value;
+  soloQueue = document.getElementById("soloButton").getAttribute("active");
+  flexQueue = document.getElementById("flexButton").getAttribute("active");
+  championSelection = document.getElementById("champion").value;
+  selectedChampions = document.getElementById(championSelection + "Champions").querySelectorAll(".selectedChampion");
+  var imageSources = [];
+  selectedChampions.forEach(function (div) {
+    var img = div.querySelector('img');
+    imageSources.push(img.src.split("/").pop().replace(".png", ""));
+  });
+
+  // Ahora imageSources contiene los src de todas las imágenes dentro de los divs seleccionados
+  topSelected = document.getElementById("top").getAttribute("selected");
+  jungleSelected = document.getElementById("jungle").getAttribute("selected");
+  middleSelected = document.getElementById("middle").getAttribute("selected");
+  bottomSelected = document.getElementById("bottom").getAttribute("selected");
+  utilitySelected = document.getElementById("utility").getAttribute("selected");
+
+  // Crear un objeto con los datos a enviar
+  var data = {
+    numberMatches: numberMatches,
+    soloQueue: soloQueue,
+    flexQueue: flexQueue,
+    championSelection: championSelection,
+    selectedChampions: imageSources,
+    topSelected: topSelected,
+    jungleSelected: jungleSelected,
+    middleSelected: middleSelected,
+    bottomSelected: bottomSelected,
+    utilitySelected: utilitySelected
+  };
+
+  // Realizar la solicitud POST a analysis.php
+  fetch('analysis.php', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  });
+}
