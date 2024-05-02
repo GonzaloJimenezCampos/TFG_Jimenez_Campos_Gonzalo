@@ -6,6 +6,12 @@ $connection = connect($server, $serveruser, $serverpassword, $PDOoptions);
 $carrouselHeight = "900px";
 $pagesTransform = "0";
 
+if (isset($_GET["alert"])) {
+    if ($_GET["alert"] == "401Search") {
+        echo "<script> alert('Unathorized access to summoner search, access it correctly through the index form - Error 401') </script>";
+    }
+}
+
 if (isset($_GET["page"]) && $_GET["page"] == 1) {
     $carrouselHeight = "100%";
     $pagesTransform = "-100";
@@ -74,126 +80,92 @@ $stmt->execute();
                     </div>
                     <div class="logo"><img src="img/logo_placeholder.png" alt="FxLoL web logo"></div>
                     <div class="summonerSearch">
-                        <form action="summoner_search.php" method="POST">
-                            <select id="region" name="region">
-                                <option value="volvo">EUW</option>
-                                <option value="saab">NA</option>
-                                <option value="mercedes">EUE</option>
-                                <option value="audi">LAS</option>
-                            </select>
-                            <input type="text" name="summoner" id="summoner" placeholder="Summoner name + #Tag">
-                            <a href="analysis_settings.html">Temporal link to access analysis settings</a>
-                        </form>
+                        <select id="region" name="region">
+                            <option value="euw1">EUW</option>
+                            <option value="na1">NA</option>
+                            <option value="eune1">EUNE</option>
+                            <option value="la1">LAN</option>
+                            <option value="la2">LAS</option>
+                        </select>
+                        <input type="text" name="summoner" id="summoner" placeholder="Summoner name + #Tag"
+                            onkeypress="checkUserExistance(event)">
                     </div>
                     <div class="analysesRecords">
-                        <div class="analysis">
+                        <?php
+
+                        if (isset($_SESSION["user_id"])) {
+                            $sqlRecord = "SELECT * FROM records WHERE user_id = " . $_SESSION["user_id"] . " ORDER BY record_date DESC LIMIT 3";
+                            $stmtRecord = $connection->prepare($sqlRecord);
+                            $stmtRecord->execute();
+
+                            function getCategoryLevel($score)
+                            {
+                                switch ($score) {
+                                    case ($score < 20):
+                                        $category = "IRON";
+                                        break;
+                                    case ($score < 40):
+                                        $category = "BRONZE";
+                                        break;
+                                    case ($score < 60):
+                                        $category = "SILVER";
+                                        break;
+                                    case ($score < 75):
+                                        $category = "GOLD";
+                                        break;
+                                    case ($score < 85):
+                                        $category = "MASTER";
+                                        break;
+                                    default:
+                                        $category = "GRANDMASTER";
+                                        break;
+
+                                }
+                                return $category;
+                            }
+
+                            $i = 0;
+                            while ($regRecord = $stmtRecord->fetch()) {
+                                echo '<div class="analysis">
                             <div class="summonerInfo">
-                                <div class="summonerAvatar"><img src="img/profile.png"></div>
-                                <div class="summonerName">Ortega y Gasset</div>
+                                <div class="summonerAvatar"><img src="img/profileicon/' . $_SESSION["records"][$i][0] . '.png"></div>
+                                <div class="summonerName">' . $_SESSION["records"][$i][1] . '</div>
                             </div>
                             <div class="analysisSubcategories">
                                 <div class="farm">
-                                    <div class="icon"><img src="img/profile.png" alt=""></div>
-                                    <div class="score">50</div>
+                                    <div class="icon"><img src="img/categories/202305-' . getCategoryLevel($regRecord["gold"]) . '.png" alt=""></div>
+                                    <div class="score">' . $regRecord["gold"] . '</div>
                                 </div>
                                 <div class="damage">
-                                    <div class="icon"><img src="img/profile.png" alt=""></div>
-                                    <div class="score">50</div>
+                                    <div class="icon"><img src="img/categories/101101-' . getCategoryLevel($regRecord["damage"]) . '.png" alt=""></div>
+                                    <div class="score">' . $regRecord["damage"] . '</div>
                                 </div>
                                 <div class="objectives">
-                                    <div class="icon"><img src="img/profile.png" alt=""></div>
-                                    <div class="score">50</div>
+                                    <div class="icon"><img src="img/categories/301106-' . getCategoryLevel($regRecord["objectives"]) . '.png" alt=""></div>
+                                    <div class="score">' . $regRecord["objectives"] . '</div>
                                 </div>
                                 <div class="vision">
-                                    <div class="icon"><img src="img/profile.png" alt=""></div>
-                                    <div class="score">50</div>
+                                    <div class="icon"><img src="img/categories/204102-' . getCategoryLevel($regRecord["vision"]) . '.png" alt=""></div>
+                                    <div class="score">' . $regRecord["vision"] . '</div>
                                 </div>
                                 <div class="kda">
-                                    <div class="icon"><img src="img/profile.png" alt=""></div>
-                                    <div class="score">50</div>
+                                    <div class="icon"><img src="img/categories/201003-' . getCategoryLevel($regRecord["kda"]) . '.png" alt=""></div>
+                                    <div class="score">' . $regRecord["kda"] . '</div>
                                 </div>
                                 <div class="winrate">
-                                    <div class="icon"><img src="img/profile.png" alt=""></div>
-                                    <div class="score">50%</div>
+                                    <div class="icon"><img src="img/categories/303203-' . getCategoryLevel($regRecord["winrate"]) . '.png" alt=""></div>
+                                    <div class="score">' . $regRecord["winrate"] . '%</div>
                                 </div>
                             </div>
                             <div class="analysisScore">
-                                <div class="icon"><img src="img/profile.png" alt=""></div>
-                                <div class="score">50</div>
+                                <div class="icon"><img src="img/categories/101108-' . getCategoryLevel($regRecord["score"]) . '.png" alt=""></div>
+                                <div class="score">' . $regRecord["score"] . '</div>
                             </div>
-                        </div>
-                        <div class="analysis">
-                            <div class="summonerInfo">
-                                <div class="summonerAvatar"><img src="img/profile.png"></div>
-                                <div class="summonerName">Ortega y Gasset</div>
-                            </div>
-                            <div class="analysisSubcategories">
-                                <div class="farm">
-                                    <div class="icon"><img src="img/profile.png" alt=""></div>
-                                    <div class="score">50</div>
-                                </div>
-                                <div class="damage">
-                                    <div class="icon"><img src="img/profile.png" alt=""></div>
-                                    <div class="score">50</div>
-                                </div>
-                                <div class="objectives">
-                                    <div class="icon"><img src="img/profile.png" alt=""></div>
-                                    <div class="score">50</div>
-                                </div>
-                                <div class="vision">
-                                    <div class="icon"><img src="img/profile.png" alt=""></div>
-                                    <div class="score">50</div>
-                                </div>
-                                <div class="kda">
-                                    <div class="icon"><img src="img/profile.png" alt=""></div>
-                                    <div class="score">50</div>
-                                </div>
-                                <div class="winrate">
-                                    <div class="icon"><img src="img/profile.png" alt=""></div>
-                                    <div class="score">50%</div>
-                                </div>
-                            </div>
-                            <div class="analysisScore">
-                                <div class="icon"><img src="img/profile.png" alt=""></div>
-                                <div class="score">50</div>
-                            </div>
-                        </div>
-                        <div class="analysis">
-                            <div class="summonerInfo">
-                                <div class="summonerAvatar"><img src="img/profile.png"></div>
-                                <div class="summonerName">Ortega y Gasset</div>
-                            </div>
-                            <div class="analysisSubcategories">
-                                <div class="farm">
-                                    <div class="icon"><img src="img/profile.png" alt=""></div>
-                                    <div class="score">50</div>
-                                </div>
-                                <div class="damage">
-                                    <div class="icon"><img src="img/profile.png" alt=""></div>
-                                    <div class="score">50</div>
-                                </div>
-                                <div class="objectives">
-                                    <div class="icon"><img src="img/profile.png" alt=""></div>
-                                    <div class="score">50</div>
-                                </div>
-                                <div class="vision">
-                                    <div class="icon"><img src="img/profile.png" alt=""></div>
-                                    <div class="score">50</div>
-                                </div>
-                                <div class="kda">
-                                    <div class="icon"><img src="img/profile.png" alt=""></div>
-                                    <div class="score">50</div>
-                                </div>
-                                <div class="winrate">
-                                    <div class="icon"><img src="img/profile.png" alt=""></div>
-                                    <div class="score">50%</div>
-                                </div>
-                            </div>
-                            <div class="analysisScore">
-                                <div class="icon"><img src="img/profile.png" alt=""></div>
-                                <div class="score">50</div>
-                            </div>
-                        </div>
+                        </div>';
+                                $i++;
+                            }
+                        }
+                        ?>
                     </div>
                 </div>
                 <div class="page" id="page2">

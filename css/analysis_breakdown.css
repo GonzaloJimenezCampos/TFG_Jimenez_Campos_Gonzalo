@@ -5,6 +5,29 @@
     padding: 175px 130px 35px 100px;
 }
 
+.error{
+    display: block;
+    margin-bottom: 70px;
+    text-align: center;
+}
+
+h1{
+    font-weight: bold;
+}
+
+h2{
+    font-weight: bold;
+}
+
+.error h2{
+    margin-bottom: 50px;
+    font-size: 50px;
+}
+
+.error p{
+    font-size: 18px;
+}
+
 .generalScore{
     display: flex;
     flex-direction: column;
@@ -21,12 +44,13 @@
 
 .generalScore h1{
     text-align: center;
-    margin-bottom: 20px;
+    margin: 20px 0px;
 }
 
 .generalScore p{
     text-align: center;
     margin-bottom: 30px;
+    font-size: 18px;
 }
 
 .generalScore h2{
@@ -50,7 +74,7 @@
 
 .category img{
     width: 100px;
-    margin: auto;
+    margin: 0px auto;
 }
 
 .category h2{
@@ -60,6 +84,11 @@
 
 .category p{
     text-align: center;
+    font-size: 18px;
+}
+
+.score{
+    margin-top: auto;
 }
 
 .button{
