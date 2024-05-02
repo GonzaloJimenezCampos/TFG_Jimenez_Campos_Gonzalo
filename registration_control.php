@@ -39,6 +39,7 @@ try {
             $_SESSION['user_id'] = $regUser['user_id'];
             $_SESSION['profile_image']=$regUser['profile_image'];
             $_SESSION['permissions']=$reg['permissions'];
+            $_SESSION['records']= [];
             header('Location: index.php');
             exit;
         }else{

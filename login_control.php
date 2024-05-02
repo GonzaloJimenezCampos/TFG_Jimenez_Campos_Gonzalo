@@ -3,6 +3,7 @@
 $controla=false;
 include('config.php');
 include('lib.php');
+include('helpers.php');
 
 // Validaci�n del token CSRF
 if (!isset($_POST['token']) || $_POST['token'] !== $_SESSION['token']) {
@@ -29,6 +30,16 @@ try {
             $_SESSION['user_id'] = $reg['user_id'];
             $_SESSION['profile_image']=$reg['profile_image'];
             $_SESSION['permissions']=$reg['permissions'];
+            $sqlRecord = "SELECT * FROM records WHERE user_id = " . $_SESSION["user_id"] . " ORDER BY record_date DESC LIMIT 3";
+            $stmtRecord = $connection->prepare($sqlRecord);
+            $stmtRecord->execute();
+            $_SESSION['records']= [];
+            while ($regRecord = $stmtRecord->fetch()) {
+                $summonerIcon = getSummonerRecognitionData($regRecord["puuid"], $regRecord["region"])["profileIconId"];
+                $summonerInfo = getSummonerName($regRecord["puuid"], 'europe');
+                $summonerName = $summonerInfo["gameName"] . "#" . $summonerInfo["tagLine"];
+                $_SESSION['records'][] = [$summonerIcon, $summonerName];
+            }
             header('Location: index.php');
             exit;
         } else {

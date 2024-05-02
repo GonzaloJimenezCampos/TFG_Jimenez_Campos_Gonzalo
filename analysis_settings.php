@@ -30,7 +30,7 @@ if (isset($_GET["username"]) && isset($_GET["regionCode"])) {
 
     $summonerRecognitionData = getSummonerRecognitionData($summoner["puuid"], $regionCode);
 
-    $summonerLastMatches = getSummonerMatchesIds($summoner["puuid"], 1, $region);
+    $summonerLastMatches = getSummonerMatchesIds($summoner["puuid"], 1, $region, null);
 
     $data = json_decode(file_get_contents('./champion.json', true));
 } else {
@@ -163,14 +163,19 @@ if (isset($_GET["username"]) && isset($_GET["regionCode"])) {
             </div>
             <div class="selectedChampions" id="focusChampions" style="display: none;">
             </div>
-            <div class="roles" id="roles">
-                <img src="img/roles/top.png" alt="" role="top" onmouseover="hoverRole(this)" onmouseout="unhoverRole(this)" onclick="selectRole(this)" id="top" selected="false">
-                <img src="img/roles/jungle.png" alt="" role="jungle" onmouseover="hoverRole(this)" onmouseout="unhoverRole(this)" onclick="selectRole(this)" id="jungle" selected="false">
-                <img src="img/roles/middle.png" alt="" role="middle" onmouseover="hoverRole(this)" onmouseout="unhoverRole(this)" onclick="selectRole(this)" id="middle" selected="false">
-                <img src="img/roles/bottom.png" alt="" role="bottom" onmouseover="hoverRole(this)" onmouseout="unhoverRole(this)" onclick="selectRole(this)" id="bottom" selected="false">
-                <img src="img/roles/utility.png" alt="" role="utility" onmouseover="hoverRole(this)" onmouseout="unhoverRole(this)" onclick="selectRole(this)" id="utility" selected="false">
+            <div class="role" id="role">
+                <img src="img/roles/unselected.png" role="unselected" onmouseover="hoverRole(this)" onmouseout="unhoverRole(this)" onclick="showRoles()" id="roleImg">
             </div>
+            <div class="roles" id="roles" style="display: none;">
+                <img src="img/roles/top.png" alt="" role="top" onmouseover="hoverRole(this)" onmouseout="unhoverRole(this)" onclick="selectRole(this)">
+                <img src="img/roles/jungle.png" alt="" role="jungle" onmouseover="hoverRole(this)" onmouseout="unhoverRole(this)" onclick="selectRole(this)">
+                <img src="img/roles/middle.png" alt="" role="middle" onmouseover="hoverRole(this)" onmouseout="unhoverRole(this)" onclick="selectRole(this)">
+                <img src="img/roles/bottom.png" alt="" role="bottom" onmouseover="hoverRole(this)" onmouseout="unhoverRole(this)" onclick="selectRole(this)">
+                <img src="img/roles/utility.png" alt="" role="utility" onmouseover="hoverRole(this)" onmouseout="unhoverRole(this)" onclick="selectRole(this)">
+            </div>
+            <div class="analysisButtonContainer">
             <button onclick="" id="analysisButton">ANALYZE</button>
+            </div>
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.7.1.js"

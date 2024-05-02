@@ -146,7 +146,7 @@
 }
 
 .analysisSettings {
-
+    width: 500px;
 }
 
 .matchesAndQueue {
@@ -238,6 +238,11 @@
     border-radius: 50%;
 }
 
+.role{
+    display: flex;
+    justify-content: center;
+}
+
 .roles {
     display: flex;
     justify-content: space-evenly;
@@ -248,12 +253,14 @@
     width: 100px;
 }
 
-button {
+.analysisButtonContainer{
+    text-align: center;
+    margin-top: 50px;
+}
+
+#analysisButton {
     background-color: #165251;
     color: #E1F2F2;
     padding: 10px 40px;
     border-radius: 12px;
-    position: relative;
-    top: 90px;
-    left: 190px;
 }

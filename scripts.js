@@ -846,18 +846,43 @@ function toggleChampionDiv() {
 }
 
 function toggleActive(button) {
-  var isActive = button.getAttribute("active");
-  if (isActive == "0") {
-    button.style.backgroundColor = "#165251"; // Cambiar el color de fondo a #165251 si active es true
-  } else {
-    button.style.backgroundColor = "red"; // Cambiar el color de fondo a rojo si active es false
+  var soloButton = document.getElementById('soloButton');
+  var flexButton = document.getElementById('flexButton');
+
+  // Verificar si el botón presionado es el "Solo"
+  if (button.id === 'soloButton') {
+      soloButton.style.backgroundColor = 'green';
+      soloButton.setAttribute('active', '1'); // Cambiar el valor de active a 1
+      // Si el botón "Flex" está en verde, se cambia a rojo
+      if (flexButton.style.backgroundColor === 'green') {
+          flexButton.style.backgroundColor = 'red';
+          flexButton.setAttribute('active', '0'); // Cambiar el valor de active a 0
+      }
   }
-  button.setAttribute("active", (isActive - 1) * -1);
+  // Verificar si el botón presionado es el "Flex"
+  else if (button.id === 'flexButton') {
+      flexButton.style.backgroundColor = 'green';
+      flexButton.setAttribute('active', '1'); // Cambiar el valor de active a 1
+      // Si el botón "Solo" está en verde, se cambia a rojo
+      if (soloButton.style.backgroundColor === 'green') {
+          soloButton.style.backgroundColor = 'red';
+          soloButton.setAttribute('active', '0'); // Cambiar el valor de active a 0
+      }
+  }
   isAnalysisReady();
 }
 
+
 function hoverRole(element) {
   element.src = "img/roles/" + element.role + "-hover.png";
+}
+
+function showRoles(){
+  if (document.getElementById("roles").style.display=="none"){
+    document.getElementById("roles").style.display="flex";
+  }else{
+    document.getElementById("roles").style.display="none";
+  }
 }
 
 function unhoverRole(element) {
@@ -866,13 +891,11 @@ function unhoverRole(element) {
 
 
 function selectRole(element) {
-  if (element.getAttribute("selected") === "true") {
-    element.style.backgroundColor = "transparent";
-    element.setAttribute("selected", "false");
-  } else {
-    element.style.backgroundColor = "#d4d4d4";
-    element.setAttribute("selected", "true");
-  }
+  newRole=element.src;
+  document.getElementById("roleImg").src=newRole.replace("-hover","");
+  document.getElementById("roleImg").setAttribute("role",element.role)
+  showRoles();
+  isAnalysisReady();
 }
 
 function isAnalysisReady() {
@@ -880,7 +903,7 @@ function isAnalysisReady() {
   soloQueue = document.getElementById("soloButton").getAttribute("active");
   flexQueue = document.getElementById("flexButton").getAttribute("active");
   button = document.getElementById("analysisButton");
-  if ((numberMatches > 0 && numberMatches < 21) && (soloQueue == "1" || flexQueue == "1")) {
+  if ((numberMatches > 0 && numberMatches < 21) && (soloQueue == "1" || flexQueue == "1") && document.getElementById("roleImg").getAttribute("role")!="unselected") {
     button.setAttribute("onclick", "getSettingsInfo()");
   } else {
     button.setAttribute("onclick", "");
@@ -900,32 +923,26 @@ function getSettingsInfo() {
   });
 
   // Ahora imageSources contiene los src de todas las imágenes dentro de los divs seleccionados
-  topSelected = document.getElementById("top").getAttribute("selected");
-  jungleSelected = document.getElementById("jungle").getAttribute("selected");
-  middleSelected = document.getElementById("middle").getAttribute("selected");
-  bottomSelected = document.getElementById("bottom").getAttribute("selected");
-  utilitySelected = document.getElementById("utility").getAttribute("selected");
+  roleSelected = document.getElementById("roleImg").getAttribute("role");
+
+  //Ahora cogemos el username y el regionCode
+  var urlParams = new URLSearchParams(window.location.search);  
+  var username = urlParams.get('username');
+  var regionCode = urlParams.get('regionCode');
 
   // Crear un objeto con los datos a enviar
   var data = {
+    username: username,
+    regionCode: regionCode,
     numberMatches: numberMatches,
     soloQueue: soloQueue,
     flexQueue: flexQueue,
     championSelection: championSelection,
     selectedChampions: imageSources,
-    topSelected: topSelected,
-    jungleSelected: jungleSelected,
-    middleSelected: middleSelected,
-    bottomSelected: bottomSelected,
-    utilitySelected: utilitySelected
+    roleSelected: roleSelected
   };
 
-  // Realizar la solicitud POST a analysis.php
-  fetch('analysis.php', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(data)
-  });
+  var queryString = encodeURIComponent(JSON.stringify(data));
+
+  window.location.href = "analysis.php?" + queryString;
 }

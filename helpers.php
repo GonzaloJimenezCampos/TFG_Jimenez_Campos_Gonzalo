@@ -41,10 +41,10 @@ function getSummonerRanks($puuid, $regionCode)
 }
 
 //Devuelve una lista con las id de los partidos que ha jugado un jugador. Puedes usar cualquier region pero mejor el cluster más cercano
-function getSummonerMatchesIds($puuid, $matchesCount, $region)
+function getSummonerMatchesIds($puuid, $matchesCount, $region, $queueId)
 {
     include ("config.php");
-    return makeApiCall("https://" . $region . ".api.riotgames.com/lol/match/v5/matches/by-puuid/" . $puuid . "/ids?start=0&count=" . $matchesCount . "&" . $API_KEY);
+    return makeApiCall("https://" . $region . ".api.riotgames.com/lol/match/v5/matches/by-puuid/" . $puuid . "/ids?" . (is_null($queueId) ? "" : "queue=" . $queueId . "&") . "start=0&count=" . $matchesCount . "&" . $API_KEY);
 }
 
 //Dado un id de una partida, devuelve todos los datos de esa partida. Puedes usar cualquier region pero mejor el cluster más cercano
@@ -52,4 +52,10 @@ function getMatchInfo($matchId, $region)
 {
     include ("config.php");
     return makeApiCall("https://" . $region . ".api.riotgames.com/lol/match/v5/matches/" . $matchId . "?" . $API_KEY);
+}
+
+function getSummonerName($puuid, $region)
+{
+    include ("config.php");
+    return makeApiCall("https://" . $region . ".api.riotgames.com/riot/account/v1/accounts/by-puuid/" . $puuid . "?" . $API_KEY);
 }
