@@ -18,6 +18,19 @@ function getCategoryLevel($score)
 
     return $category;
 }
+
+function getTipLevel($score, $lowScore, $averageScore, $contentArray, $analysisContentArray)
+{
+    if ($_GET[$score] < $lowScore) {
+        $content = $analysisContentArray[$contentArray[0]];
+    } else if ($_GET[$score] >= $lowScore && $_GET[$score] <= $averageScore) {
+        $content = $analysisContentArray[$contentArray[1]];
+    } else {
+        $content = $analysisContentArray[$contentArray[2]];
+    }
+
+    return $content;
+}
 ?>
 
 <!DOCTYPE html>
@@ -49,28 +62,15 @@ function getCategoryLevel($score)
             echo '
             <div class="generalScore">
                 <img src="img/categories/101108-' . getCategoryLevel($_GET["totalScore"]) . '.png" alt="">
-                <h1>TOTAL SCORE</h1>';
-                if ($_GET["totalScore"] < 50) {
-                    echo '<p>' . $analysisContentArray["totalBad"].'</p>';
-                } else if ($_GET["totalScore"]>= 50 && $_GET["totalScore"] <= 75) {
-                    echo '<p>' . $analysisContentArray["totalAverage"].'</p>';
-                } else {
-                    echo '<p>' . $analysisContentArray["totalGood"].'</p>';
-                }
-                echo '<div class="score"><h2>' . $_GET["totalScore"] . '</h2></div>
+                <h1>TOTAL SCORE</h1>
+                <p>' . getTipLevel("totalScore", 50, 75, ["totalBad", "totalAverage", "totalGood"], $analysisContentArray) . '</p>
+            <div class="score"><h2>' . $_GET["totalScore"] . '</h2></div>
             </div>
             <div class="categories">
                 <div class="category">
                     <img src="img/categories/202305-' . getCategoryLevel($_GET["gold"]) . '.png" alt="">
-                    <h2>GOLD EARNING</h2>';
-
-            if ($_GET["farmPerMinute"] < 30) {
-                echo '<p>' . $analysisContentArray["badFarm"];
-            } else if ($_GET["farmPerMinute"] >= 30 && $_GET["farmPerMinute"] <= 45) {
-                echo '<p>' . $analysisContentArray["averageFarm"];
-            } else {
-                echo '<p>' . $analysisContentArray["goodFarm"];
-            }
+                    <h2>GOLD EARNING</h2>
+                    <p>' . getTipLevel("farmPerMinute", 30, 45, ["badFarm", "averageFarm", "goodFarm"], $analysisContentArray);
 
             if ($_GET["farmPerMinute"] < 30 && $_GET["goldPerMinute"] < 20) {
                 echo $analysisContentArray["goldBadBad"];
@@ -95,97 +95,67 @@ function getCategoryLevel($score)
             } else if ($_GET["farmPerMinute"] >= 30 && $_GET["farmPerMinute"] <= 45) {
                 echo $analysisContentArray["goldTipDecentFarm"];
             }
+
             if ($_GET["goldPerMinute"] < 20) {
                 echo $analysisContentArray["goldTipBadGold"];
             }
 
-            echo '</p>';
-
-            echo '<div class="score"><h2>' . $_GET["gold"] . '</h2></div>
+            echo '</p>
+            
+            <div class="score"><h2>' . $_GET["gold"] . '</h2></div>
                 </div>
                 <div class="category">
                     <img src="img/categories/101101-' . getCategoryLevel($_GET["damage"]) . '.png" alt="">
-                    <h2>DAMAGE</h2>';
-            if ($_GET["damage"] < 50) {
-                echo '<p>' . $analysisContentArray["damageChampionsBad"] . '</p>';
-            } else if ($_GET["damage"] >= 50 && $_GET["damage"] <= 75) {
-                echo '<p>' . $analysisContentArray["damageChampionsAverage"] . '</p>';
-            } else {
-                echo '<p>' . $analysisContentArray["damageChampionsGood"] . '</p>';
-            }
-            echo '<div class="score"><h2>' . $_GET["damage"] . '</h2></div>
+                    <h2>DAMAGE</h2>
+                    <p>' . getTipLevel("damage", 50, 75, ["damageChampionsBad", "damageChampionsAverage", "damageChampionsGood"], $analysisContentArray) . '</p>
+                <div class="score"><h2>' . $_GET["damage"] . '</h2></div>
                 </div>
                 <div class="category">
                     <img src="img/categories/301106-' . getCategoryLevel($_GET["objectives"]) . '.png" alt="">
-                    <h2>OBJECTIVES</h2>';
-                    if ($_GET["objectives"] < 50) {
-                        echo '<p>' . $analysisContentArray["objectivesBad"] . '</p>';
-                    } else if ($_GET["objectives"] >= 50 && $_GET["objectives"] <= 75) {
-                        echo '<p>' . $analysisContentArray["objectivesAverage"] . '</p>';
-                    } else {
-                        echo '<p>' . $analysisContentArray["objectivesGood"] . '</p>';
-                    }
-                    echo '<div class="score"><h2>' . $_GET["objectives"] . '</h2></div>
+                    <h2>OBJECTIVES</h2>
+                    <p>' . getTipLevel("objectives", 50, 75, ["objectivesBad", "objectivesAverage", "objectivesGood"], $analysisContentArray) . '</p>
+                <div class="score"><h2>' . $_GET["objectives"] . '</h2></div>
                 </div>
                 <div class="category">
                     <img src="img/categories/204102-' . getCategoryLevel($_GET["vision"]) . '.png" alt="">
-                    <h2>VISION</h2>';
-                    if ($_GET["vision"] < 50) {
-                        echo '<p>' . $analysisContentArray["visionBad"] . '</p>';
-                    } else if ($_GET["vision"] >= 50 && $_GET["vision"] <= 75) {
-                        echo '<p>' . $analysisContentArray["visionAverage"] . '</p>';
-                    } else {
-                        echo '<p>' . $analysisContentArray["visionGood"] . '</p>';
-                    }
-                    echo '<div class="score"><h2>' . $_GET["vision"] . '</h2></div>
+                    <h2>VISION</h2>
+                    <p>' . getTipLevel("vision", 50, 75, ["visionBad", "visionAverage", "visionGood"], $analysisContentArray) . '</p>
+                <div class="score"><h2>' . $_GET["vision"] . '</h2></div>
                 </div>
                 <div class="category">
                     <img src="img/categories/201003-' . getCategoryLevel($_GET["kda"]) . '.png" alt="">
-                    <h2>KDA</h2>';
-                    if ($_GET["killParticipation"] < 35) {
-                        echo '<p>' . $analysisContentArray["kpBad"];
-                    } else if ($_GET["killParticipation"] >= 35 && $_GET["killParticipation"] <= 52) {
-                        echo '<p>' . $analysisContentArray["kpAverage"];
-                    } else {
-                        echo '<p>' . $analysisContentArray["kpGood"];
-                    }
+                    <h2>KDA</h2>
+                    <p>' . getTipLevel("killParticipation", 35, 52, ["kpBad", "kpAverage", "kpGood"], $analysisContentArray);
 
-                    if($_GET["killParticipation"] < 35 || $_GET["deathScore"] <15){
-                        echo $analysisContentArray["kdaBadConnector"];
-                    }else{
-                        echo $analysisContentArray["kdaGoodConnector"];
-                    }
+            if ($_GET["killParticipation"] < 35 || $_GET["deathScore"] < 15) {
+                echo $analysisContentArray["kdaBadConnector"];
+            } else {
+                echo $analysisContentArray["kdaGoodConnector"];
+            }
+            echo getTipLevel("deathScore", 15, 22, ["deathsBad", "deathsAverage", "deathsGood"], $analysisContentArray). '</p>
 
-                    if ($_GET["deathScore"] < 15) {
-                        echo $analysisContentArray["deathsBad"]. '</p>';
-                    } else if ($_GET["deathScore"] >= 15 && $_GET["deathScore"] <= 22) {
-                        echo $analysisContentArray["deathsAverage"]. '</p>';
-                    } else {
-                        echo $analysisContentArray["deathsGood"]. '</p>';
-                    }
+            <p>';
 
-                    echo '<p>';
+            if ($_GET["killParticipation"] < 35 && $_GET["deathScore"] > 22) {
+                echo $analysisContentArray["kdaInactiveTip"];
+            } else {
+                if ($_GET["killParticipation"] < 35) {
+                    echo $analysisContentArray["kdaKpBadTip"];
+                }
+                if ($_GET["deathScore"] < 15) {
+                    echo $analysisContentArray["kdaDeathBadTip"];
+                }
+            }
 
-                    if($_GET["killParticipation"] < 35 && $_GET["deathScore"] >22){
-                        echo $analysisContentArray["kdaInactiveTip"];
-                    }else{
-                        if ($_GET["killParticipation"] < 35) {
-                            echo $analysisContentArray["kdaKpBadTip"];
-                        }
-                        if ( $_GET["deathScore"] <15) {
-                            echo $analysisContentArray["kdaDeathBadTip"];
-                        }
-                    }
+            echo '</p>';
 
-                    echo '</p>';
-
-                    echo '<div class="score"><h2>' . $_GET["kda"] . '</h2></div>
+            echo '<div class="score"><h2>' . $_GET["kda"] . '</h2></div>
                 </div>
                 <div class="category">
                     <img src="img/categories/303203-' . getCategoryLevel($_GET["winrate"]) . '.png" alt="">
                     <h2>WINRATE</h2>';
-                    echo '<p>' . str_replace("[REPLACEME]", ($_GET["winrate"]>49? "right": "wrong") ,$analysisContentArray["winrate"] ) . '</p>';
-                    echo '<div class="score"><h2>' . $_GET["winrate"] . '%</h2></div>
+            echo '<p>' . str_replace("[REPLACEME]", ($_GET["winrate"] > 49 ? "right" : "wrong"), $analysisContentArray["winrate"]) . '</p>';
+            echo '<div class="score"><h2>' . $_GET["winrate"] . '%</h2></div>
                 </div>
             </div>';
         }
