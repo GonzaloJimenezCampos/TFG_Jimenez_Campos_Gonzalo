@@ -131,12 +131,10 @@ if ($numberOfMatchesToAnalyze == (int) $data["numberMatches"]) {
     $totalObjectivesScore = calculateCategoryScore($damageToObjectivesPerMinuteAverage, $totalDamageToObjectivesGoal, 100);
     $totalVisionScore = calculateCategoryScore($visionScoreAverage, $visionGoal, 100);
     $totalKillParticipationScore = calculateCategoryScore($killParticipationAverage, $killParticipationGoal, 70);
-    if ($deathsPerMinuteAverage >= 1) {
+    if ($deathsPerMinuteAverage >= 0.5) {
         $totalDeathPerMinuteScore = 0;
-    } else if ($deathsPerMinuteAverage <= 0.1) {
-        $totalDeathPerMinuteScore = 30;
     } else {
-        $totalDeathPerMinuteScore = 30 * (1.1 - $deathsPerMinuteAverage);
+        $totalDeathPerMinuteScore = 30 - ($deathsPerMinuteAverage * 60);
     }
     $totalKdaScore = $totalKillParticipationScore + $totalDeathPerMinuteScore;
 
@@ -161,9 +159,7 @@ if ($numberOfMatchesToAnalyze == (int) $data["numberMatches"]) {
         $sql = 'INSERT INTO records (record_date, puuid, region, score, gold, damage, objectives, vision, kda, winrate, user_id) VALUES (NOW(), "' . $summoner["puuid"] . '", "' . $regionCode . '" ,' . number_format($totalScore, 0) . ', ' . number_format($totalGoldScore, 0) . ', ' . number_format($totalDamageScore, 0) . ', ' . number_format($totalObjectivesScore, 0) . ', ' . number_format($totalVisionScore, 0) . ', ' . number_format($totalKdaScore, 0) . ', ' . number_format($winrate, 0) . ', ' . $_SESSION["user_id"] . ')';
         $stmt = $connection->prepare($sql);
         $stmt->execute();
-        if (count($_SESSION['records'])>3){
-            array_pop($_SESSION['records']);
-        }
+        array_pop($_SESSION['records']);
         $summonerIcon = getSummonerRecognitionData($summoner["puuid"], $regionCode)["profileIconId"];
         $summonerInfo = getSummonerName($summoner["puuid"], 'europe');
         $summonerName = $summonerInfo["gameName"] . "#" . $summonerInfo["tagLine"];
