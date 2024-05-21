@@ -5,10 +5,15 @@ include ('config.php');
 $connection = connect($server, $serveruser, $serverpassword, $PDOoptions);
 $carrouselHeight = "900px";
 $pagesTransform = "0";
+$alert = "";
 
 if (isset($_GET["alert"])) {
     if ($_GET["alert"] == "401Search") {
-        echo "<script> alert('Unathorized access to summoner search, access it correctly through the index form - Error 401') </script>";
+        $alert = "<script> customAlert('Unathorized access to summoner search - Error 401', 0) </script>";
+    } else if ($_GET["alert"] == "404Search") {
+        $alert = "<script> customAlert('Summoner " . $_GET['username'] . " not found', 0) </script>";
+    } else if ($_GET["alert"] == "404Region") {
+        $alert = "<script> customAlert('Summoner " . $_GET['username'] . " exists, but the region is incorrect', 2) </script>";
     }
 }
 
@@ -17,13 +22,50 @@ if (isset($_GET["page"]) && $_GET["page"] == 1) {
     $pagesTransform = "-100";
 }
 
-if (isset($_SESSION["user_id"])) {
-    $sql = 'SELECT p.post_id, p.post_title, p.post_body, p.post_date, u.user_id, COALESCE(u.username, "[deleted]") AS username, COALESCE(u.profile_image, "img/profile.png") AS profile_image, COALESCE(lp.likes_count, 0) AS likes, COALESCE(lp.user_liked, 0) AS user_liked, COALESCE(sp.user_saved, 0) AS user_saved, COALESCE(c.comments_count, 0) AS comments_count FROM Posts p LEFT JOIN Users u ON p.user_id = u.user_id LEFT JOIN ( SELECT post_id, COUNT(*) AS likes_count, MAX(CASE WHEN user_id = ' . $_SESSION["user_id"] . ' THEN 1 ELSE 0 END) AS user_liked FROM LikedPosts GROUP BY post_id ) lp ON p.post_id = lp.post_id LEFT JOIN ( SELECT post_id, MAX(CASE WHEN user_id = ' . $_SESSION["user_id"] . ' THEN 1 ELSE 0 END) AS user_saved FROM SavedPosts WHERE user_id = ' . $_SESSION["user_id"] . ' GROUP BY post_id ) sp ON p.post_id = sp.post_id LEFT JOIN ( SELECT post_id, COUNT(*) AS comments_count FROM comments GROUP BY post_id ) c ON p.post_id = c.post_id ORDER BY p.post_date DESC;';
+if (isset($_GET["postPage"])) {
+    $actualPage = $_GET["postPage"];
 } else {
-    $sql = 'SELECT p.post_id, p.post_title, p.post_body, p.post_date, COALESCE(u.username, "[deleted]") AS username, COALESCE(u.profile_image, "img/profile.png") AS profile_image, COUNT(lp.post_id) AS likes, 0 AS user_liked, 0 AS user_saved, COALESCE(c.comments_count, 0) AS comments_count FROM Posts p LEFT JOIN Users u ON p.user_id = u.user_id LEFT JOIN LikedPosts lp ON p.post_id = lp.post_id LEFT JOIN (SELECT post_id, COUNT(*) AS comments_count FROM comments GROUP BY post_id) c ON p.post_id = c.post_id GROUP BY p.post_id ORDER BY p.post_date DESC;';
+    
 }
-$stmt = $connection->prepare($sql);
-$stmt->execute();
+
+$actualPage = 1;
+$initialPostSearch = 25;
+
+$sqlPostAmount = 'SELECT COUNT(1) AS postNumber FROM Posts';
+$stmtPostAmount = $connection->prepare($sqlPostAmount);
+$stmtPostAmount->execute();
+$postCount = $stmtPostAmount->fetch();
+$totalPostPages = ceil($postCount["postNumber"] / $initialPostSearch);
+$postScript = "<script> getPosts(" . $initialPostSearch . ", " . $actualPage . ") </script>";
+
+
+function calculateTimeAgo($date)
+{
+    $now = time(); // Fecha y hora actual en segundos
+    $timestamp = strtotime($date); // Convertir la fecha recibida a un timestamp
+
+    // Calcular la diferencia en segundos
+    $difference = $now - $timestamp;
+
+    if ($difference < 60) { // Menos de un minuto
+        return "now";
+    } elseif ($difference < 3600) { // Menos de una hora
+        $minutes = round($difference / 60);
+        return "$minutes minutes ago";
+    } elseif ($difference < 86400) { // Menos de 24 horas
+        $hours = round($difference / 3600);
+        return "$hours hours ago";
+    } elseif ($difference < 2592000) { // Menos de un mes (30 días)
+        $days = round($difference / 86400);
+        return "$days days ago";
+    } elseif ($difference < 31536000) { // Menos de un año (365 días)
+        $months = round($difference / 2592000);
+        return "$months months ago";
+    } else { // Más de un año
+        $years = round($difference / 31536000);
+        return "$years years ago";
+    }
+}
 
 ?>
 
@@ -42,9 +84,28 @@ $stmt->execute();
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;700&family=Oswald:wght@400;700&display=swap"
         rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nabla&display=swap" rel="stylesheet">
 </head>
 
 <body>
+    <div class="alerts" id="alerts">
+    </div>
+    <div class="wrapper">
+        <header>
+            <i class="bx bx-cookie"></i>
+            <h2>Consentimiento de las cookies</h2>
+        </header>
+
+        <div class="data">
+            <p>Este sitio web utiliza cookies para ayudarte a tener una experiencia de navegación superior y más
+                relevante en el sitio web.</p>
+        </div>
+
+        <div class="buttons">
+            <button class="button" id="acceptBtn">Aceptar</button>
+            <button class="button">Declinar</button>
+        </div>
+    </div>
     <div w3-include-html="header.php"></div>
     <div class="container">
         <div class="pageSelector">
@@ -61,24 +122,24 @@ $stmt->execute();
                             <form id="postForm" class="postForm">
                                 <label for="title">Title</label>
                                 <input type="text" id="title" placeholder="Write the post's title here..." name="title"
-                                    autocomplete="off" required>
+                                    autocomplete="off" maxlength="50" required>
                                 <label for="title">Tags</label>
                                 <div class="tagsPack">
                                     <div class="tagsSelection"><input type="text" class="tags" id="tags"
                                             oninput="searchTags(this)" placeholder="Search for tags..."
-                                            autocomplete="off">
+                                            autocomplete="off" maxlength="30">
                                         <div class="autocomplete-items" id="autocomplete-items"></div>
                                     </div>
                                     <div class="selectedTags" id="selectedTags"></div>
                                 </div>
                                 <label for="body">Post body</label>
                                 <textarea id="body" name="body" placeholder="Write what you want to share here..."
-                                    required></textarea>
+                                    maxlength="2000" required></textarea>
                                 <button type="submit" onclick="createPost(event)">Publish</button>
                             </form>
                         </div>
                     </div>
-                    <div class="logo"><img src="img/logo_placeholder.png" alt="FxLoL web logo"></div>
+                    <div class="nabla-logo logo">F(x)LoL</div>
                     <div class="summonerSearch">
                         <select id="region" name="region">
                             <option value="euw1">EUW</option>
@@ -87,14 +148,15 @@ $stmt->execute();
                             <option value="la1">LAN</option>
                             <option value="la2">LAS</option>
                         </select>
+                        <div class="separator"></div>
                         <input type="text" name="summoner" id="summoner" placeholder="Summoner name + #Tag"
-                            onkeypress="checkUserExistance(event)">
+                            onkeypress="checkUserExistance(event)" autocomplete="off">
                     </div>
                     <div class="analysesRecords">
                         <?php
 
                         if (isset($_SESSION["user_id"])) {
-                            $sqlRecord = "SELECT * FROM records WHERE user_id = " . $_SESSION["user_id"] . " ORDER BY record_date DESC LIMIT 3";
+                            $sqlRecord = "SELECT * FROM records WHERE user_id = " . $_SESSION["user_id"] . " ORDER BY record_date DESC LIMIT 5";
                             $stmtRecord = $connection->prepare($sqlRecord);
                             $stmtRecord->execute();
 
@@ -132,10 +194,6 @@ $stmt->execute();
                                 <div class="summonerName">' . $_SESSION["records"][$i][1] . '</div>
                             </div>
                             <div class="analysisSubcategories">
-                                <div class="farm">
-                                    <div class="icon"><img src="img/categories/202305-' . getCategoryLevel($regRecord["gold"]) . '.png" alt=""></div>
-                                    <div class="score">' . $regRecord["gold"] . '</div>
-                                </div>
                                 <div class="damage">
                                     <div class="icon"><img src="img/categories/101101-' . getCategoryLevel($regRecord["damage"]) . '.png" alt=""></div>
                                     <div class="score">' . $regRecord["damage"] . '</div>
@@ -152,6 +210,10 @@ $stmt->execute();
                                     <div class="icon"><img src="img/categories/201003-' . getCategoryLevel($regRecord["kda"]) . '.png" alt=""></div>
                                     <div class="score">' . $regRecord["kda"] . '</div>
                                 </div>
+                                <div class="farm">
+                                    <div class="icon"><img src="img/categories/202305-' . getCategoryLevel($regRecord["gold"]) . '.png" alt=""></div>
+                                    <div class="score">' . $regRecord["gold"] . '</div>
+                                </div>
                                 <div class="winrate">
                                     <div class="icon"><img src="img/categories/303203-' . getCategoryLevel($regRecord["winrate"]) . '.png" alt=""></div>
                                     <div class="score">' . $regRecord["winrate"] . '%</div>
@@ -164,6 +226,11 @@ $stmt->execute();
                         </div>';
                                 $i++;
                             }
+                            if ($i == 0) {
+                                echo '<h2>No analysis here yet...</h2><br><p>Search for a summoner and analyze their gameplay!</p>';
+                            }
+                        } else {
+                            echo '<h2>No analysis here yet...</h2><br><p>Log in and start analyzing summoners!</p>';
                         }
                         ?>
                     </div>
@@ -174,18 +241,18 @@ $stmt->execute();
                             <div class="titleSearch">
                                 <input type="text" name="postName" class="postName" id="postName"
                                     placeholder="Search post..." oninput="searchPosts(this)"
-                                    onkeypress="searchPersonalTitlePost(event)">
+                                    onkeypress="searchPersonalTitlePost(event)" autocomplete="off">
                                 <div class="autocomplete-posts" id="autocomplete-posts" style="display:none;"></div>
                             </div>
                             <div class="searchParameters">
                                 <div class="order" id="orderSelect">Order by <select id="order" name="order"
-                                        onchange="toggleDateLimit()">
+                                        class="postOrder" onchange="toggleDateLimit()">
                                         <option value="date">Most recent</option>
                                         <option value="likes">Most liked</option>
                                     </select>
                                 </div>
                                 <div class="dateLimit" id="dateLimit" style="display: none;"><select id="maxDate"
-                                        name="maxDate" onchange="getPosts()">
+                                        name="maxDate" onchange="getPosts(25,1,null, null)">
                                         <option value="1">Today</option>
                                         <option value="7">Last week</option>
                                         <option value="30">Last month</option>
@@ -193,21 +260,29 @@ $stmt->execute();
                                     </select>
                                 </div>
                                 <div class="arrow" id="arrow" style="display: none;" onclick="goBackPost()"><img
-                                        src="img/backwardsArrow.png"
+                                        src="img/cursor.png"
                                         alt="Arrow that you can click to go to the forum main page"></div>
                             </div>
                         </div>
                         <?php
                         if (isset($_SESSION["user_id"])) {
                             echo '<div class="seeSaved" id="seeSaved">
-                            <input type="submit" class="savedButton" id="savedButton" onclick="getSavedPosts()" value="See saved posts">
+                                <input type="submit" class="savedButton" id="savedButton" onclick="getPosts(25,1,\'saved\', null)" value="See saved posts">
                             </div>
                             <div class="seeMyPosts" id="seeMyPosts">
-                            <input type="submit" class="myPostsButton" id="myPostsButton" onclick="getMyPosts()" value="See my posts">
+                                <input type="submit" class="myPostsButton" id="myPostsButton" onclick="getPosts(25,1,\'myPosts\', null)" value="See my posts">
                             </div>
                             <div class="createPost">
-                            <input type="submit" class="postButton" id="openPopup" value="Write a post">
-                        </div>';
+                                <input type="submit" class="postButton" id="openPopup" onclick="openPopUp()" value="Write a post">
+                            </div>
+                            <div class="hamburgerButton" id="hamburgerButton">
+                                <img src="img/burgerButton.png" onclick="burgerMenu()">
+                                <div class="hamburgerOptions">
+                                    <input type="submit" class="savedButton" id="savedButton" onclick="getPosts(25,1,\'saved\', null)" value="See saved posts" style="display: none;">
+                                    <input type="submit" class="myPostsButton" id="myPostsButton" onclick="getPosts(25,1,\'myPosts\', null)" value="See my posts" style="display: none;">
+                                    <input type="submit" class="postButton" id="openPopup" onclick="openPopUp()" value="Write a post" style="display: none;">
+                                </div>
+                            </div>';
                         } else {
                             echo '<div class="createPost"><a href="login.php">
                             <input type="submit" class="postButton" value="Log in to write a post">
@@ -217,68 +292,45 @@ $stmt->execute();
                         ?>
                     </div>
                     <div class="posts" id="posts">
-                        <?php while ($reg = $stmt->fetch()) {
-                            echo '<div class="post">
-                            <a href="post.php?post=' . $reg["post_id"] . '">
-                            <div class="postInfo">
-                            <div class="userInfo">
-                                <div class="avatar"><img src="' . $reg["profile_image"] . '" alt="Original poster avatar"></div>
-                                <div class="postUsername">' . $reg["username"] . '</div>
-                                <div class="postTags">';
-                            $sqlTags = "SELECT tag_name FROM Tags WHERE tag_id in (SELECT tag_id FROM TagsPosts WHERE post_id=" . $reg["post_id"] . ")";
-                            $stmtTags = $connection->prepare($sqlTags);
-                            $stmtTags->execute();
-                            while ($regTags = $stmtTags->fetch()) {
-                                echo '<div class="postTag">' . $regTags["tag_name"] . '</div>';
-                            }
-                            echo '</div>
-                            </div>
-                            <div class="pubDate">' . $reg["post_date"] . '</div>
-                        </div>
-                        <div class="title">
-                            <h2>' . $reg["post_title"] . '</h2>
-                        </div>
-                        <div class="postBody">
-                            ' . $reg["post_body"] . '
-                        </div>
-                        <div class="interactions">
-                            <div class="likes">
-                            <div class="heart">';
-                            if (isset($_SESSION["user_id"])) {
-                                echo '<img src="img/like_' . $reg["user_liked"] . '.png" alt="Like icon. Click to like the post" 
-                            post-id="' . $reg["post_id"] . '" post-liked="' . $reg["user_liked"] . '" onclick="changeLikeStatePost(event, this)">';
-                            } else {
-                                echo '<a href="login.php"><img src="img/like_0.png" alt="Like icon. Click to like the post"></a>';
-                            }
-                            echo '</div><div class="number">' . $reg["likes"] . '</div>
-                            </div>
-                            <div class="save">';
-                            if (isset($_SESSION["user_id"])) {
-                                echo '<img src="img/save_' . $reg["user_saved"] . '.png" alt="Save icon. Click to save the post"
-                                post-id="' . $reg["post_id"] . '" post-saved="' . $reg["user_saved"] . '" onclick="changeSaveStatePost(event, this)">';
-                            } else {
-                                echo '<a href="login.php"><img src="img/save_0.png" alt="Save icon. Click to save the post"></a>';
-                            }
-                            echo '</div>
-                            <div class="comments">
-                                <div class="comment"><img src="img/comment.png" alt="Comment icon"></div>
-                                <div class="number">' . $reg["comments_count"] . '</div>
-                            </div>
-                            <div class="delete">';
-                            if ((isset($_SESSION["permissions"]) && $_SESSION["permissions"] == 1) || (isset($_SESSION["user_id"]) && $reg["user_id"] == $_SESSION["user_id"])) {
-                                echo '<img src="img/delete.png" alt="Delete icon. Click to delete the post"
-                                post-id="' . $reg["post_id"] . '" onclick="deletePost(event, this)">';
-                            }
-                            echo '</div>
-                            </div></a></div>';
-                        } ?>
                     </div>
+                    <p class="returnSearch">Not finding what you are looking for? <span onclick="scrollToTop()">Return to the Searchbar</span></p>
                 </div>
             </div>
         </div>
+        </div>
+        <div w3-include-html="footer.html"></div>
         <script src="https://code.jquery.com/jquery-3.7.1.js"
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <script src="scripts.js"></script>
+        <script>
+            const cookieBox = document.querySelector(".wrapper"),
+                buttons = document.querySelectorAll(".button");
+
+            const executeCodes = () => {
+                if (!document.cookie.includes("cookie_accepted=true")) {
+                    cookieBox.classList.add("show");
+                    cookieBox.style.display = "block";
+                }
+
+                buttons.forEach((button) => {
+                    button.addEventListener("click", () => {
+                        cookieBox.classList.remove("show");
+                        cookieBox.style.display = "none";
+
+                        if (button.id == "acceptBtn") {
+                            document.cookie = "cookie_accepted=true; max-age=" + 60 * 60 * 24 * 30;
+                        }
+                    });
+                });
+            };
+
+            window.addEventListener("load", executeCodes);
+
+        </script>
+        <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+        <?php echo $postScript ?>
+        <?php echo $alert ?>
+        
 </body>
 
 </html>

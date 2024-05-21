@@ -68,43 +68,6 @@ function getTipLevel($score, $lowScore, $averageScore, $contentArray, $analysisC
             </div>
             <div class="categories">
                 <div class="category">
-                    <img src="img/categories/202305-' . getCategoryLevel($_GET["gold"]) . '.png" alt="">
-                    <h2>GOLD EARNING</h2>
-                    <p>' . getTipLevel("farmPerMinute", 30, 45, ["badFarm", "averageFarm", "goodFarm"], $analysisContentArray);
-
-            if ($_GET["farmPerMinute"] < 30 && $_GET["goldPerMinute"] < 20) {
-                echo $analysisContentArray["goldBadBad"];
-            } else if ($_GET["farmPerMinute"] < 30 && $_GET["goldPerMinute"] >= 20) {
-                echo $analysisContentArray["goldBadGood"];
-            } else if ($_GET["farmPerMinute"] >= 30 && $_GET["goldPerMinute"] < 20) {
-                echo $analysisContentArray["goldGoodBad"];
-            } else {
-                echo $analysisContentArray["goldGoodGood"];
-            }
-
-            if ($_GET["goldPerMinute"] < 20) {
-                echo $analysisContentArray["goldEarnedBad"] . '</p>';
-            } else {
-                echo $analysisContentArray["goldEarnedGood"] . '</p>';
-            }
-
-            echo '<p>';
-
-            if ($_GET["farmPerMinute"] < 30) {
-                echo $analysisContentArray["goldTipBadFarm"];
-            } else if ($_GET["farmPerMinute"] >= 30 && $_GET["farmPerMinute"] <= 45) {
-                echo $analysisContentArray["goldTipDecentFarm"];
-            }
-
-            if ($_GET["goldPerMinute"] < 20) {
-                echo $analysisContentArray["goldTipBadGold"];
-            }
-
-            echo '</p>
-            
-            <div class="score"><h2>' . $_GET["gold"] . '</h2></div>
-                </div>
-                <div class="category">
                     <img src="img/categories/101101-' . getCategoryLevel($_GET["damage"]) . '.png" alt="">
                     <h2>DAMAGE</h2>
                     <p>' . getTipLevel("damage", 50, 75, ["damageChampionsBad", "damageChampionsAverage", "damageChampionsGood"], $analysisContentArray) . '</p>
@@ -150,6 +113,43 @@ function getTipLevel($score, $lowScore, $averageScore, $contentArray, $analysisC
             echo '</p>';
 
             echo '<div class="score"><h2>' . $_GET["kda"] . '</h2></div>
+                </div>
+                <div class="category">
+                    <img src="img/categories/202305-' . getCategoryLevel($_GET["gold"]) . '.png" alt="">
+                    <h2>GOLD EARNING</h2>
+                    <p>' . getTipLevel("farmPerMinute", 30, 45, ["badFarm", "averageFarm", "goodFarm"], $analysisContentArray);
+
+            if ($_GET["farmPerMinute"] < 30 && $_GET["goldPerMinute"] < 20) {
+                echo $analysisContentArray["goldBadBad"];
+            } else if ($_GET["farmPerMinute"] < 30 && $_GET["goldPerMinute"] >= 20) {
+                echo $analysisContentArray["goldBadGood"];
+            } else if ($_GET["farmPerMinute"] >= 30 && $_GET["goldPerMinute"] < 20) {
+                echo $analysisContentArray["goldGoodBad"];
+            } else {
+                echo $analysisContentArray["goldGoodGood"];
+            }
+
+            if ($_GET["goldPerMinute"] < 20) {
+                echo $analysisContentArray["goldEarnedBad"] . '</p>';
+            } else {
+                echo $analysisContentArray["goldEarnedGood"] . '</p>';
+            }
+
+            echo '<p><br>';
+
+            if ($_GET["farmPerMinute"] < 30) {
+                echo $analysisContentArray["goldTipBadFarm"];
+            } else if ($_GET["farmPerMinute"] >= 30 && $_GET["farmPerMinute"] <= 45) {
+                echo $analysisContentArray["goldTipDecentFarm"];
+            }
+
+            if ($_GET["goldPerMinute"] < 20) {
+                echo $analysisContentArray["goldTipBadGold"];
+            }
+
+            echo '</p>
+            
+            <div class="score"><h2>' . $_GET["gold"] . '</h2></div>
                 </div>
                 <div class="category">
                     <img src="img/categories/303203-' . getCategoryLevel($_GET["winrate"]) . '.png" alt="">

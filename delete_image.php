@@ -19,5 +19,4 @@ $stmt = $connection->prepare($sqlUpdate);
 $stmt->execute();
 if ($stmt->execute()) {
     $_SESSION["profile_image"] = "img/profile.png";
-    echo "<script>window.location.reload();</script>";
 }

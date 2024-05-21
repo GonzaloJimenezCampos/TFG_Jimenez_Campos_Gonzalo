@@ -25,12 +25,12 @@ try {
 
     if ($reg = $stmt->fetch()) {
         // Verificar la password
-        if ($password==$reg['password']) {
+        if (password_verify($password,$reg['password'])) {
             $_SESSION['username'] = $reg['username'];
             $_SESSION['user_id'] = $reg['user_id'];
             $_SESSION['profile_image']=$reg['profile_image'];
             $_SESSION['permissions']=$reg['permissions'];
-            $sqlRecord = "SELECT * FROM records WHERE user_id = " . $_SESSION["user_id"] . " ORDER BY record_date DESC LIMIT 3";
+            $sqlRecord = "SELECT * FROM records WHERE user_id = " . $_SESSION["user_id"] . " ORDER BY record_date DESC LIMIT 5";
             $stmtRecord = $connection->prepare($sqlRecord);
             $stmtRecord->execute();
             $_SESSION['records']= [];
@@ -40,13 +40,13 @@ try {
                 $summonerName = $summonerInfo["gameName"] . "#" . $summonerInfo["tagLine"];
                 $_SESSION['records'][] = [$summonerIcon, $summonerName];
             }
-            header('Location: index.php');
+            header('Location: index.php?');
             exit;
         } else {
-            header('Location: login.php');
+            header('Location: login.php?error=login');
         }
     } else {
-        header('Location: login.php');
+        header('Location: login.php?error=login');
     }
 } catch (PDOException $e) {
     die("Error en la conexi�n: " . $e->getMessage());

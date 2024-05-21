@@ -4,10 +4,6 @@ include ('lib.php');
 include ('config.php');
 
 $connection = connect($server, $serveruser, $serverpassword, $PDOoptions);
-$sqlPassword = 'SELECT password FROM Users WHERE user_id=' . $_SESSION["user_id"];
-$stmtPassword = $connection->prepare($sqlPassword);
-$stmtPassword->execute();
-$regPassword = $stmtPassword->fetch();
 
 $sqlMessages = 'SELECT m.message_id, m.message_date, m.message, m.message_read, 
 COALESCE(u_sender.username, "[deleted]") AS sender_username, 
@@ -39,10 +35,13 @@ $stmtMessages->execute();
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;700&family=Oswald:wght@400;700&display=swap"
         rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nabla&display=swap" rel="stylesheet">
 </head>
 
 <body>
     <div w3-include-html="userless_header.html"></div>
+    <div class="alerts" id="alerts">
+    </div>
     <div class="container">
         <div class="pageSelector">
             <div class="pageOption active" onclick="showPageProfile(0)">
@@ -65,7 +64,7 @@ $stmtMessages->execute();
                     <div class="profileInfo">
                         <div class="label">Username</div>
                         <input type="text" name="username" value="<?php echo $_SESSION["username"] ?>"
-                            onkeypress="changeUsername(event)">
+                            onkeypress="changeUsername(event)" autocomplete="off">
                         <div class="label">Avatar</div>
                         <div class="avatarOptions">
                             <div class="avatarButton" style="cursor: pointer;" onclick="selectImage()">Change avatar
@@ -81,17 +80,13 @@ $stmtMessages->execute();
                         <div class="accountDropDown" onclick="showPasswordInputs()">Change password</div>
                         <div id="passwordInputs" style="display: none;" class="passwordInputs">
                             <div class="passwordInput">
-                                <input type="text" value="<?php echo $regPassword["password"] ?>"
-                                    readonly>
-                            </div>
-                            <div class="passwordInput">
                                 <input type="password" id="newPassword" placeholder="New password">
                             </div>
                             <div class="passwordInput">
                                 <input type="password" id="confirmPassword" placeholder="Confirm new password">
                             </div>
                             <div class="passwordInput">
-                                <button onclick="changePassword()">Confirm</button>
+                                <div onclick="changePassword()" class="changePassword">Confirm</div>
                             </div>
                         </div>
                         <div class="accountButton" onclick="deleteAccount(0)">Delete account</div>
@@ -111,7 +106,7 @@ $stmtMessages->execute();
                                 <div class="date">' . $regMessages["message_date"] . '</div>
                             </div>
                             <div class="content">' . $regMessages["message"] . '</div>
-                            <div class="isRead"><input type="checkbox" id="markAsRead" onchange="markRead(this)" message-id="'.$regMessages["message_id"].'" message-status="';
+                            <div class="isRead"><input type="checkbox" id="markAsRead" class="markAsRead" onchange="markRead(this)" message-id="'.$regMessages["message_id"].'" message-status="';
                             if ($regMessages["message_read"]==1){
                                 echo '1" checked';
                             }
@@ -123,6 +118,7 @@ $stmtMessages->execute();
                         }
                         ?>
                     </div>
+                    <div class="readAll" onclick="markAllAsRed()">Mark all as read</div>
                 </div>
             </div>
         </div>
