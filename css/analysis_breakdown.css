@@ -1,99 +1,116 @@
+body::-webkit-scrollbar {
+    display: none;
+}
+
 .container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 175px 130px 35px 100px;
+    padding: 175px 130px 35px 130px;
 }
 
-.error{
+.error {
     display: block;
     margin-bottom: 70px;
+    color: #FAFCFF;
     text-align: center;
 }
 
-h1{
+h1 {
     font-weight: bold;
 }
 
-h2{
+h2 {
     font-weight: bold;
 }
 
-.error h2{
+.error h2 {
     margin-bottom: 50px;
     font-size: 50px;
 }
 
-.error p{
+.error p {
     font-size: 18px;
 }
 
-.generalScore{
+.generalScore {
     display: flex;
     flex-direction: column;
     width: 300px;
-    background-color: rgb(146, 191, 243);
+    background-color: #609EEB;
     padding: 30px;
     margin-bottom: 175px;
+    border-radius: 5px;
 }
 
-.generalScore img{
+.generalScore img {
     width: 150px;
     margin: auto;
 }
 
-.generalScore h1{
+.generalScore h1 {
     text-align: center;
     margin: 20px 0px;
 }
 
-.generalScore p{
+.generalScore p {
     text-align: center;
     margin-bottom: 30px;
     font-size: 18px;
 }
 
-.generalScore h2{
+.generalScore h2 {
     text-align: center;
 }
 
-.categories{
+.categories {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-evenly;
 }
 
-.category{
+.category {
     display: flex;
     flex-direction: column;
     width: 300px;
-    background-color: rgb(126, 171, 255);
+    background-color: #87b0e2;
     padding: 30px;
     margin-bottom: 100px;
+    border-radius: 5px;
 }
 
-.category img{
+.category img {
     width: 100px;
     margin: 0px auto;
 }
 
-.category h2{
+.category h2 {
     text-align: center;
     margin: 20px 0px;
 }
 
-.category p{
+.category p {
     text-align: center;
     font-size: 18px;
 }
 
-.score{
+.score {
     margin-top: auto;
 }
 
-.button{
-    background-color: #165251;
-    color: #E1F2F2;
+.button {
+    background-color: #609EEB;
+    color: rgb(27, 22, 22);
     padding: 20px 40px;
     border-radius: 12px;
+}
+
+@media (max-width:375px){
+    .category {
+        padding: 30px 10px;
+    }
+
+    .generalScore {
+        padding: 30px 10px;
+    }
 }

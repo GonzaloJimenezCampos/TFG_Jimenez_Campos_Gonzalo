@@ -43,7 +43,7 @@ function showPageProfile(pageIndex) {
   // Mostrar la página seleccionada y ocultar las demás
   pages.forEach((page, index) => {
     if (index === pageIndex) {
-      page.style.display = 'flex';
+      page.style.display = '';
     } else {
       page.style.display = 'none';
     }
@@ -79,7 +79,7 @@ function adjustCarouselHeight(pageIndex) {
 
 function getPageHeight(pageIndex) {
   if (pageIndex === 0) {
-    return '900px';
+    return '1200px';
   } else {
     return '100%';
   }
@@ -330,8 +330,9 @@ function changeUsername(event) {
           if (response === "success") {
             event.target.defaultValue = newUsername;
             location.reload();
+            customAlert("Username changed succesfully", 1);
           } else {
-            alert("Error al cambiar el nombre de usuario");
+            customAlert("Something went wrong, please try again", 0);
           }
         }
       };
@@ -353,17 +354,24 @@ function showPasswordInputs() {
 function changePassword() {
   var newPassword = document.getElementById("newPassword").value;
   var confirmPassword = document.getElementById("confirmPassword").value;
-  if (newPassword == confirmPassword) {
+  if (newPassword == confirmPassword && newPassword.trim() != "") {
     var xhr = new XMLHttpRequest();
     xhr.open("POST", "change_password.php", true);
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     xhr.onreadystatechange = function () {
       if (xhr.readyState == 4 && xhr.status == 200) {
-        alert("Contraseña cambiada exitosamente");
-        showPasswordInputs()
+        var response = JSON.parse(xhr.responseText);
+        if (response === true) {
+          customAlert("Password changed successfully", 1);
+          showPasswordInputs();
+        } else {
+          customAlert('The password must contain upper and lowercase, numbers and special characters', 2);
+        }
       }
     };
     xhr.send("password=" + confirmPassword);
+  } else {
+    customAlert("Passwords do not match, please try again", 2);
   }
 }
 
@@ -376,6 +384,9 @@ function deleteAccount(hard) {
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     xhr.onreadystatechange = function () {
       if (xhr.readyState == 4 && xhr.status == 200) {
+        var xhrImage = new XMLHttpRequest();
+        xhrImage.open('POST', 'delete_image.php', true);
+        xhrImage.send();
         logOut();
       }
     };
@@ -383,21 +394,27 @@ function deleteAccount(hard) {
   }
 }
 
-function postComment(event, postId) {
+function enterPostComment(postId) {
   if (event.key === 'Enter') {
-    event.preventDefault();
-    var comment = event.target.value.trim();
-    if (comment !== '') {
-      var xhr = new XMLHttpRequest();
-      xhr.open('POST', 'post_comment.php', true);
-      xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-      xhr.onreadystatechange = function () {
-        if (xhr.readyState == 4 && xhr.status == 200) {
-          location.reload();
-        }
-      };
-      xhr.send('comment=' + encodeURIComponent(comment) + '&post=' + postId);
-    }
+    postComment(postId);
+  }
+}
+
+function postComment(postId) {
+  event.preventDefault();
+  var comment = document.getElementById("comment-posting").value.trim();
+  if (comment !== '') {
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'post_comment.php', true);
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState == 4 && xhr.status == 200) {
+        location.reload();
+      }
+    };
+    xhr.send('comment=' + encodeURIComponent(comment) + '&post=' + postId);
+  } else {
+    customAlert("You are trying to send an empty message, write something in the comment box first", 2)
   }
 }
 
@@ -409,10 +426,10 @@ function removeBlur() {
   document.getElementById("page2").classList.remove('blur');
 }
 
-document.getElementById('openPopup').addEventListener('click', function () {
+function openPopUp() {
   document.getElementById('popupContainer').style.display = 'block';
   applyBlur();
-});
+}
 
 document.getElementById('closePopup').addEventListener('click', function () {
   document.getElementById('popupContainer').style.display = 'none';
@@ -427,7 +444,7 @@ function createPost(event) {
   var tagsString = tags.join(',');
 
   if (title === '' || body === '') {
-    alert('Please fill all the fields to create a post');
+    customAlert('You need to fill all the fields', 2);
     return;
   } else {
     var xhr = new XMLHttpRequest();
@@ -438,7 +455,6 @@ function createPost(event) {
       if (xhr.readyState === XMLHttpRequest.DONE) {
         if (xhr.status === 200) {
           document.getElementById('popupContainer').style.display = 'none';
-          alert("Post successfully published");
           window.location.href = "index.php?page=1";
         }
       }
@@ -447,36 +463,6 @@ function createPost(event) {
     var formData = 'title=' + encodeURIComponent(title) + '&body=' + encodeURIComponent(body) + '&tags=' + encodeURIComponent(tagsString);
     xhr.send(formData);
   }
-}
-
-function toggleDateLimit() {
-  var order = document.getElementById("order").value;
-  var dateLimit = document.getElementById("dateLimit");
-
-  if (order === "likes") {
-    dateLimit.style.display = "block";
-  } else {
-    dateLimit.style.display = "none";
-  }
-  getPosts();
-}
-
-function getPosts() {
-  var order = document.getElementById("order").value;
-  var maxDate = document.getElementById("maxDate").value;
-  // Realizar una solicitud AJAX para obtener los nuevos datos según el orden seleccionado
-  var xhr = new XMLHttpRequest();
-  xhr.open('GET', 'get_posts.php?order=' + order + '&dateLimit=' + maxDate, true);
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState === XMLHttpRequest.DONE) {
-      if (xhr.status === 200) {
-        // Actualizar el contenido de tu página con los nuevos datos obtenidos
-        var response = xhr.responseText;
-        document.getElementById("posts").innerHTML = response;
-      }
-    }
-  };
-  xhr.send();
 }
 
 function getComments(postId) {
@@ -496,19 +482,34 @@ function getComments(postId) {
   xhr.send();
 }
 
-function getSavedPosts() {
+function toggleDateLimit() {
+  var order = document.getElementById("order").value;
+  var dateLimit = document.getElementById("dateLimit");
+
+  if (order === "likes") {
+    dateLimit.style.display = "block";
+  } else {
+    dateLimit.style.display = "none";
+  }
+  getPosts(25, 1, null, null);
+}
+
+function getPosts(initialPostSearch, actualPage, order, title) {
+  if (!order) {
+    var order = document.getElementById("order").value;
+  }
+  var maxDate = document.getElementById("maxDate").value;
   // Realizar una solicitud AJAX para obtener los nuevos datos según el orden seleccionado
   var xhr = new XMLHttpRequest();
-  xhr.open('GET', 'get_posts.php?order=saved', true);
+  xhr.open('GET', 'get_posts.php?order=' + order + '&dateLimit=' + maxDate + '&initialPostSearch=' + initialPostSearch + '&actualPage=' + actualPage + '&title=' + title, true);
   xhr.onreadystatechange = function () {
     if (xhr.readyState === XMLHttpRequest.DONE) {
       if (xhr.status === 200) {
-        document.getElementById("postName").style.display = "none";
-        document.getElementById("orderSelect").style.display = "none";
-        document.getElementById("dateLimit").style.display = "none";
-        document.getElementById("seeSaved").style.display = "none";
-        document.getElementById("seeMyPosts").style.display = "none";
-        document.getElementById("arrow").style.display = "block";
+        if (order == "saved" || order == "myPosts") {
+          goMyPosts();
+        } if (title) {
+          document.getElementById("postName").value = "";
+        }
         var response = xhr.responseText;
         document.getElementById("posts").innerHTML = response;
       }
@@ -517,32 +518,29 @@ function getSavedPosts() {
   xhr.send();
 }
 
-function getMyPosts() {
-  // Realizar una solicitud AJAX para obtener los nuevos datos según el orden seleccionado
-  var xhr = new XMLHttpRequest();
-  xhr.open('GET', 'get_posts.php?order=myPosts', true);
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState === XMLHttpRequest.DONE) {
-      if (xhr.status === 200) {
-        document.getElementById("postName").style.display = "none";
-        document.getElementById("orderSelect").style.display = "none";
-        document.getElementById("dateLimit").style.display = "none";
-        document.getElementById("seeSaved").style.display = "none";
-        document.getElementById("seeMyPosts").style.display = "none";
-        document.getElementById("arrow").style.display = "block";
-        var response = xhr.responseText;
-        document.getElementById("posts").innerHTML = response;
-      }
-    }
-  };
-  xhr.send();
+function goMyPosts() {
+  document.getElementById("postName").style.display = "none";
+  document.getElementById("orderSelect").style.display = "none";
+  document.getElementById("dateLimit").style.display = "none";
+  document.getElementById("seeSaved").style.display = "none";
+  document.getElementById("seeMyPosts").style.display = "none";
+  document.getElementById("openPopup").style.display = "none";
+  document.getElementById("hamburgerButton").style.display = "none";
+  document.getElementById("arrow").style.display = "block";
 }
 
 function goBackPost() {
+  var screenWidth = window.innerWidth;
+  if (screenWidth > 1065) {
+    document.getElementById("seeSaved").style.display = "block";
+    document.getElementById("seeMyPosts").style.display = "block";
+    document.getElementById("openPopup").style.display = "block";
+  } else {
+    document.getElementById("hamburgerButton").style.display = "block";
+    burgerMenu();
+  }
   document.getElementById("postName").style.display = "block";
   document.getElementById("orderSelect").style.display = "block";
-  document.getElementById("seeSaved").style.display = "block";
-  document.getElementById("seeMyPosts").style.display = "block";
   document.getElementById("arrow").style.display = "none";
   toggleDateLimit();
 }
@@ -606,11 +604,11 @@ function addTag(tag) {
   });
 
   if (tagAlreadyExists) {
-    alert('This tag has alredy been selected for this post');
+    customAlert('This tag has alredy been selected for this post', 2);
   } else {
     // Verificar si ya hay tres tags seleccionados
     if (selectedTags.length >= 3) {
-      alert('The maximum number of tags for post is 3');
+      customAlert('The maximum number of tags has been reached', 2);
     } else {
       var newTag = document.createElement('div');
       newTag.className = 'selectedTag';
@@ -682,7 +680,7 @@ function showAutocompleteListPosts(posts) {
     item.classList.add("autocomplete-post");
     item.textContent = post;
     item.addEventListener("click", function () {
-      searchTitlePost(post);
+      getPosts(25, 1, "autoComplete", post);
       hideAutocompleteListPosts();
     });
     listaAutocompletado.appendChild(item);
@@ -690,27 +688,11 @@ function showAutocompleteListPosts(posts) {
   listaAutocompletado.style.display = "block";
 }
 
-function searchTitlePost(post) {
-  var xhr = new XMLHttpRequest();
-  tag = document.getElementById("tagsSearch").value;
-  xhr.open('GET', 'get_posts.php?order=autoComplete&title=' + post + '&tags=' + tag, true);
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState === XMLHttpRequest.DONE) {
-      if (xhr.status === 200) {
-        var response = xhr.responseText;
-        document.getElementById("posts").innerHTML = response;
-        document.getElementById("postName").value = "";
-      }
-    }
-  };
-  xhr.send();
-}
-
 function searchPersonalTitlePost(event) {
   if (event.key === 'Enter') {
     var postTitle = event.target.value;
     hideAutocompleteListPosts();
-    searchTitlePost(postTitle);
+    getPosts(25, 1, "autoComplete", postTitle);
   }
 }
 
@@ -799,25 +781,29 @@ function addChampions(data, input, autocompleteDiv, element) {
         suggestion.textContent = champion;
         suggestion.addEventListener("click", function () {
           // Crear una imagen con el src del campeón seleccionado
-          var championImage = document.createElement("img");
-          championImage.src = "img/champion/" + champion.replace("'", "").replace(" ", "") + ".png"; // Ajusta la ruta de la imagen según sea necesario
+          if (document.getElementById(selectedDivId).children.length >= 6) {
+            customAlert("Max number of champions selected", 2);
+          } else {
+            var championImage = document.createElement("img");
+            championImage.src = "img/champion/" + champion.replace("'", "").replace(" ", "") + ".png"; // Ajusta la ruta de la imagen según sea necesario
 
-          // Crear un div para la imagen y agregar la imagen
-          var championDiv = document.createElement("div");
-          championDiv.classList.add("selectedChampion");
-          championDiv.appendChild(championImage);
+            // Crear un div para la imagen y agregar la imagen
+            var championDiv = document.createElement("div");
+            championDiv.classList.add("selectedChampion");
+            championDiv.appendChild(championImage);
 
-          // Agregar el div al div existente con id correspondiente al valor del select
-          var selectedChampionDiv = document.getElementById(selectedDivId);
-          selectedChampionDiv.appendChild(championDiv);
+            // Agregar el div al div existente con id correspondiente al valor del select
+            var selectedChampionDiv = document.getElementById(selectedDivId);
+            selectedChampionDiv.appendChild(championDiv);
 
-          // Agregar evento de clic al div de la imagen para borrarlo
-          championDiv.addEventListener("click", function () {
-            selectedChampionDiv.removeChild(championDiv);
-          });
+            // Agregar evento de clic al div de la imagen para borrarlo
+            championDiv.addEventListener("click", function () {
+              selectedChampionDiv.removeChild(championDiv);
+            });
 
-          // Ocultar el div de autocompletado después de seleccionar una sugerencia
-          autocompleteDiv.style.display = "none";
+            // Ocultar el div de autocompletado después de seleccionar una sugerencia
+            autocompleteDiv.style.display = "none";
+          }
         });
         autocompleteDiv.appendChild(suggestion);
         autocompleteDiv.style.display = "block"; // Mostrar el div si hay sugerencias
@@ -843,6 +829,7 @@ function toggleChampionDiv() {
   if (selectedChampionDiv) {
     selectedChampionDiv.style.display = "flex";
   }
+  isAnalysisReady()
 }
 
 function toggleActive(button) {
@@ -851,23 +838,23 @@ function toggleActive(button) {
 
   // Verificar si el botón presionado es el "Solo"
   if (button.id === 'soloButton') {
-      soloButton.style.backgroundColor = 'green';
-      soloButton.setAttribute('active', '1'); // Cambiar el valor de active a 1
-      // Si el botón "Flex" está en verde, se cambia a rojo
-      if (flexButton.style.backgroundColor === 'green') {
-          flexButton.style.backgroundColor = 'red';
-          flexButton.setAttribute('active', '0'); // Cambiar el valor de active a 0
-      }
+    soloButton.style.backgroundColor = 'green';
+    soloButton.setAttribute('active', '1'); // Cambiar el valor de active a 1
+    // Si el botón "Flex" está en verde, se cambia a rojo
+    if (flexButton.style.backgroundColor === 'green') {
+      flexButton.style.backgroundColor = 'red';
+      flexButton.setAttribute('active', '0'); // Cambiar el valor de active a 0
+    }
   }
   // Verificar si el botón presionado es el "Flex"
   else if (button.id === 'flexButton') {
-      flexButton.style.backgroundColor = 'green';
-      flexButton.setAttribute('active', '1'); // Cambiar el valor de active a 1
-      // Si el botón "Solo" está en verde, se cambia a rojo
-      if (soloButton.style.backgroundColor === 'green') {
-          soloButton.style.backgroundColor = 'red';
-          soloButton.setAttribute('active', '0'); // Cambiar el valor de active a 0
-      }
+    flexButton.style.backgroundColor = 'green';
+    flexButton.setAttribute('active', '1'); // Cambiar el valor de active a 1
+    // Si el botón "Solo" está en verde, se cambia a rojo
+    if (soloButton.style.backgroundColor === 'green') {
+      soloButton.style.backgroundColor = 'red';
+      soloButton.setAttribute('active', '0'); // Cambiar el valor de active a 0
+    }
   }
   isAnalysisReady();
 }
@@ -877,11 +864,11 @@ function hoverRole(element) {
   element.src = "img/roles/" + element.role + "-hover.png";
 }
 
-function showRoles(){
-  if (document.getElementById("roles").style.display=="none"){
-    document.getElementById("roles").style.display="flex";
-  }else{
-    document.getElementById("roles").style.display="none";
+function showRoles() {
+  if (document.getElementById("roles").style.display == "none") {
+    document.getElementById("roles").style.display = "flex";
+  } else {
+    document.getElementById("roles").style.display = "none";
   }
 }
 
@@ -891,22 +878,28 @@ function unhoverRole(element) {
 
 
 function selectRole(element) {
-  newRole=element.src;
-  document.getElementById("roleImg").src=newRole.replace("-hover","");
-  document.getElementById("roleImg").setAttribute("role",element.role)
+  newRole = element.src;
+  document.getElementById("roleImg").src = newRole.replace("-hover", "");
+  document.getElementById("roleImg").setAttribute("role", element.role)
   showRoles();
   isAnalysisReady();
 }
 
 function isAnalysisReady() {
   numberMatches = document.getElementById("numberMatches").value;
+  var focusChampionsDiv = document.getElementById("focusChampions");
+  var numberOfChildren = focusChampionsDiv.querySelectorAll(".selectedChampion").length;
   soloQueue = document.getElementById("soloButton").getAttribute("active");
   flexQueue = document.getElementById("flexButton").getAttribute("active");
   button = document.getElementById("analysisButton");
-  if ((numberMatches > 0 && numberMatches < 21) && (soloQueue == "1" || flexQueue == "1") && document.getElementById("roleImg").getAttribute("role")!="unselected") {
+  if (numberMatches < 1 || numberMatches > 20) {
+    button.setAttribute("onclick", "customAlert('The number of matches must be between 1 and 20', 2)");
+  } else if (numberOfChildren == 0 && focusChampionsDiv.style.display === "flex") {
+    button.setAttribute("onclick", "customAlert('You need to select a champion for the focus champion analysis', 2)");
+  } else if ((soloQueue == "1" || flexQueue == "1") && document.getElementById("roleImg").getAttribute("role") != "unselected") {
     button.setAttribute("onclick", "getSettingsInfo()");
   } else {
-    button.setAttribute("onclick", "");
+    button.setAttribute("onclick", "customAlert('You need to select a number of matches, queue and role before analyzing', 2)");
   }
 }
 
@@ -926,7 +919,7 @@ function getSettingsInfo() {
   roleSelected = document.getElementById("roleImg").getAttribute("role");
 
   //Ahora cogemos el username y el regionCode
-  var urlParams = new URLSearchParams(window.location.search);  
+  var urlParams = new URLSearchParams(window.location.search);
   var username = urlParams.get('username');
   var regionCode = urlParams.get('regionCode');
 
@@ -945,4 +938,78 @@ function getSettingsInfo() {
   var queryString = encodeURIComponent(JSON.stringify(data));
 
   window.location.href = "analysis.php?" + queryString;
+}
+
+function customAlert(message, category) {
+  // Crear un nuevo div para la alerta
+  var alertDiv = document.createElement("div");
+  alertDiv.classList.add("alert");
+
+  // Determinar los estilos según la categoría recibida
+  switch (category) {
+    case 0: // Category 1
+      alertDiv.style.backgroundColor = "#ff6d629c"; // Red
+      alertDiv.style.borderColor = "#f44336"; // Dark Red
+      break;
+    case 1: // Category 2
+      alertDiv.style.backgroundColor = "#4CAF509c"; // Green
+      alertDiv.style.borderColor = "#008000"; // Dark Green
+      break;
+    case 2: // Otros casos
+      alertDiv.style.backgroundColor = "#ff98009c"; // Orange
+      alertDiv.style.borderColor = "#e68a00"; // Dark Orange
+      break;
+  }
+
+  // Crear el span para cerrar la alerta
+  var closeSpan = document.createElement("span");
+  closeSpan.classList.add("closebtn");
+  closeSpan.innerHTML = "&times;";
+
+  // Agregar el evento de cerrar al hacer clic en el span
+  closeSpan.onclick = function () {
+    this.parentElement.style.display = 'none';
+  };
+
+  // Agregar el mensaje al div de la alerta
+  alertDiv.innerHTML = message;
+
+  // Agregar el span de cerrar al div de la alerta
+  alertDiv.appendChild(closeSpan);
+
+  // Obtener el contenedor de alertas por su id
+  var alertsContainer = document.getElementById("alerts");
+
+  // Insertar la alerta como primer hijo en el contenedor
+  alertsContainer.insertBefore(alertDiv, alertsContainer.firstChild);
+}
+
+function markAllAsRed() {
+  var checkboxes = document.querySelectorAll(".markAsRead");
+  checkboxes.forEach(function (checkbox) {
+    if (!checkbox.checked) {
+      checkbox.checked = true;
+      checkbox.dispatchEvent(new Event('change'))
+    }
+  });
+  customAlert("All messages have been marked as read", 1)
+}
+
+function scrollToTop() {
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+}
+
+function burgerMenu() {
+  var div = document.querySelector('.hamburgerOptions');
+  var inputs = div.querySelectorAll('input');
+  inputs.forEach(function (input) {
+    if (input.style.display === 'none') {
+      input.style.display = 'block'; // Muestra el input
+    } else {
+      input.style.display = 'none'; // Oculta el input
+    }
+  });
 }

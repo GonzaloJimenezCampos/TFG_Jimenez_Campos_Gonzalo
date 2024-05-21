@@ -2,13 +2,94 @@ body::-webkit-scrollbar {
     display: none;
 }
 
+.selectedTags::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.selectedTags::-webkit-scrollbar-thumb {
+    border-radius: 20px;
+    background: #888;
+}
+
 /* body {
     -ms-overflow-style: none;  IE and Edge 
     scrollbar-width: none;  Firefox 
 } */
 
-a {
-    color: black;
+.wrapper {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 400px;
+    background: #FAFCFF;
+    border-radius: 8px;
+    padding: 15px 25px 22px;
+    transition: right 0.3s ease;
+    z-index: 999999;
+    display: none;
+}
+
+.wrapper .show {
+    right: 20px;
+    display: block;
+}
+
+.wrapper header {
+    display: flex;
+    align-items: center;
+    column-gap: 15px;
+}
+
+header i {
+    color: #4070f4;
+    font-size: 32px;
+}
+
+header h2 {
+    color: #4070f4;
+    font-weight: 500;
+}
+
+.wrapper .data {
+    margin-top: 16px;
+}
+
+.wrapper .data p {
+    color: #333;
+    font-size: 16px;
+}
+
+.data p a {
+    color: #4070f4;
+    text-decoration: none;
+}
+
+.data p a:hover {
+    text-decoration: underline;
+}
+
+.wrapper .buttons {
+    margin-top: 16px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.buttons .button {
+    border: none;
+    color: #fff;
+    width: calc(100% / 2 - 10px);
+    padding: 8px 0;
+    border-radius: 4px;
+    background: #4070f4;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.buttons .button:hover {
+    background-color: #034bf1;
 }
 
 .container {
@@ -28,10 +109,11 @@ a {
     cursor: pointer;
     padding: 5px 10px;
     border-bottom: 2px solid transparent;
+    color: #FAFCFF;
 }
 
 .pageOption.active {
-    border-color: #000;
+    border-color: #FAFCFF;
     /* Color de la línea inferior activa */
     background-color: transparent;
 }
@@ -57,37 +139,85 @@ a {
 
 
 .logo {
-    margin-top: 100px;
-}
-
-.logo img {
-    width: 300px;
+    margin: 150px auto;
+    font-size: 100px;
+    width: fit-content;
 }
 
 .summonerSearch {
+    margin: 0 auto;
     margin-top: 100px;
+    background-color: #d3dde9;
+    width: 700px;
+    height: 50px;
+    display: flex;
+    border-radius: 25px;
+}
+
+.separator {
+    border-left: 1px solid #15191d;
+    height: 20px;
+    margin: auto 0;
+    margin-left: 25px;
+}
+
+.summonerSearch select,
+input {
+    border: none;
+    background-color: #d3dde9;
+}
+
+.summonerSearch select:focus,
+input:focus {
+    outline: none;
+}
+
+.summonerSearch select {
+    padding-right: 10px;
+    margin-left: 25px;
+}
+
+.summonerSearch option {
+    padding: 10px;
+    border-bottom: 1px solid black;
+}
+
+.summonerSearch input {
+    margin-left: 25px;
+    width: 75%;
+}
+
+.summonerSearch input::placeholder {
+    color: #484949;
 }
 
 .analysesRecords {
     margin: 0 auto;
     margin-top: 100px;
+    padding: 20px;
     width: 700px;
     text-align: center;
+    background-color: #abadaf;
+    box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.3);
+    border-radius: 20px;
 }
 
 .analysis {
     display: flex;
     margin: 15px 0px;
-    background-color: rgb(209, 209, 209);
+    background-color: #d3dde9;
     height: 100px;
+    border-radius: 20px;
 }
 
 .summonerInfo {
-    flex: 0.2;
+    flex: 0.3;
     align-content: center;
 }
 
-.summonerAvatar {}
+.summonerAvatar {
+    margin-bottom: 5px;
+}
 
 .summonerAvatar img {
     width: 50px;
@@ -95,10 +225,8 @@ a {
     border-radius: 50%;
 }
 
-.summonerName {}
-
 .analysisSubcategories {
-    flex: 0.6;
+    flex: 0.5;
     display: flex;
     justify-content: space-evenly;
     align-items: center;
@@ -137,9 +265,9 @@ a {
     top: 320px;
     left: 150%;
     transform: translate(-50%, -50%);
-    width: 33%;
+    width: 40%;
     height: 550px;
-    background-color: #f9f9f9;
+    background-color: #d3dde9;
     border: 1px solid #ccc;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
@@ -180,36 +308,48 @@ a {
 .postForm input,
 .postForm textarea {
     padding: 5px;
-    border-radius: 5px;
+    border-radius: 10px;
     border: 1px solid #ccc;
+    background-color: #f1f1f1;
 }
 
-.tagsPack{
+.tagsPack {
     display: flex;
     align-content: center;
+    margin-bottom: 10px;
 }
 
-.selectedTags{
-    display: flex;
+.selectedTags {
+    width: fit-content;
     margin-left: 30px;
+    overflow-x: auto;
+    white-space: nowrap;
+    display: flex;
+    gap: 10px;
+    box-sizing: border-box;
 }
 
-.selectedTag{
+.selectedTag {
     background-color: #ccc;
+    display: inline-block;
     padding: 5px 15px;
     margin-left: 10px;
     height: 18px;
     border-radius: 50px;
+    background-color: #609EEB;
 }
 
-.tags{
+.tags {
     width: 120px;
 }
 
 .autocomplete {
     position: relative;
 }
+
 .autocomplete-items {
+    width: 120px;
+    text-align: left;
     position: absolute;
     background-color: #f1f1f1;
     border: 1px solid #d4d4d4;
@@ -218,15 +358,17 @@ a {
     overflow-y: auto;
     z-index: 99;
 }
+
 .autocomplete-item {
     padding: 5px 10px;
     cursor: pointer;
 }
+
 .autocomplete-item:hover {
     background-color: #e9e9e9;
 }
 
-.postForm textarea{
+.postForm textarea {
     resize: none;
     font-family: 'Karla', sans-serif;
     height: 220px;
@@ -234,7 +376,7 @@ a {
 
 .postForm button {
     padding: 8px 16px;
-    background-color: #aaaaaa;
+    background-color: #609EEB;
     border: none;
     cursor: pointer;
     border-radius: 50px;
@@ -255,16 +397,14 @@ a {
     align-items: baseline;
 }
 
-.titleSearch{
+.titleSearch {
     display: flex;
     align-items: baseline;
 }
 
-.titlePost{
-}
-
 .postName {
-
+    height: 30px;
+    border-radius: 10px;
 }
 
 .postSearch input {
@@ -272,19 +412,20 @@ a {
     margin-bottom: 7px;
 }
 
-.autocomplete-posts{
+.autocomplete-posts {
     position: absolute;
     overflow: hidden;
     text-align: start;
     width: 400px;
     background-color: #f1f1f1;
     border: 1px solid #d4d4d4;
-    top: 90px;
+    top: 105px;
     max-height: 1000px;
     z-index: 99;
+    border-radius: 10px;
 }
 
-.autocomplete-post{
+.autocomplete-post {
     padding: 10px;
     cursor: pointer;
 }
@@ -300,54 +441,99 @@ a {
 
 .order {
     margin-right: 30px;
+    color: #FAFCFF;
 }
 
-.dateLimit {
-
+.postOrder {
+    color: #FAFCFF;
+    border: none;
+    background-color: #15191d;
 }
 
-.arrow img{
-    width: 50px;
+.postOrder:focus {
+    outline: none;
 }
 
-.seeSaved{
+.dateLimit select {
+    color: #FAFCFF;
+    border: none;
+    background-color: #15191d;
+}
+
+.dateLimit select:focus {
+    outline: none;
+}
+
+.arrow img {
+    width: 75px;
+}
+
+.arrow:hover {
+    filter: brightness(120%);
+    cursor: pointer;
+}
+
+.seeSaved {
     position: relative;
     left: 220px;
     margin-top: 70px;
     align-items: baseline;
 }
 
-.savedButton{
+.savedButton {
+    cursor: pointer;
     margin: 10px 0px 15px 0px;
     padding: 15px 5px;
     width: 150px;
     border-radius: 50px;
+    background-color: #609EEB;
 }
 
-.seeMyPosts{
+.seeMyPosts {
     position: relative;
+    cursor: pointer;
     left: 110px;
     margin-top: 70px;
     align-items: baseline;
 }
 
-.myPostsButton{
+.myPostsButton {
+    cursor: pointer;
     margin: 10px 0px 15px 0px;
     padding: 15px 5px;
     width: 150px;
     border-radius: 50px;
+    background-color: #609EEB;
 }
 
 .createPost {
+    cursor: pointer;
     margin-top: 70px;
     align-items: baseline;
 }
 
 .postButton {
+    cursor: pointer;
     margin: 10px 0px 15px 0px;
     padding: 15px 5px;
     width: 150px;
     border-radius: 50px;
+    background-color: #609EEB;
+}
+
+.seeMyPosts:hover,
+.savedButton:hover,
+.createPost:hover,
+.postButton:hover {
+    filter: brightness(120%);
+}
+
+.hamburgerButton {
+    display: none;
+}
+
+.hamburgerOptions {
+    display: none;
 }
 
 .posts {
@@ -363,9 +549,17 @@ a {
     text-align: start;
     display: flex;
     flex-direction: column;
-    background-color: rgb(177, 177, 177);
+    background-color: #d3dde9;
     margin: 10px 0px;
+    border-radius: 10px;
+}
 
+.post:hover {
+    filter: brightness(120%);
+}
+
+.post a {
+    color: black;
 }
 
 .postInfo {
@@ -392,19 +586,22 @@ a {
     left: 15px;
 }
 
-.postTags{
+.postTags {
     display: flex;
     justify-content: end;
     align-items: center;
-    margin-bottom: 2px;
+    margin-bottom: -13px;
     margin-left: 30px;
 }
 
-.postTag{
+.postTag {
     background-color: #ccc;
     text-align: center;
+    display: inline-block;
+    background-color: #609EEB;
     padding: 5px 15px;
     margin-right: 10px;
+    margin-bottom: 15px;
     height: 18px;
     border-radius: 50px;
 }
@@ -452,16 +649,232 @@ a {
     margin-right: 70px;
 }
 
-.comments{
+.comments {
     display: flex;
     margin-right: 30px;
     width: 70px;
 }
 
-.comment img{
+.comment img {
     width: 25px;
 }
 
 .delete img {
     width: 25px;
+}
+
+.loadMore {
+    color: #FAFCFF;
+    margin-top: 50px;
+}
+
+.loadMore div {
+    display: flex;
+    margin: 0 auto;
+    justify-content: center;
+    width: 100%;
+    margin-top: 0px;
+}
+
+.loadMore img {
+    width: 25px;
+    cursor: pointer;
+}
+
+.returnSearch {
+    color: #FAFCFF;
+    margin-top: 30px;
+    height: 20px;
+    font-size: 16px;
+}
+
+.returnSearch span {
+    border-bottom: #FAFCFF 1px solid;
+    cursor: pointer;
+}
+
+@media (max-width: 1350px) {
+
+    .popupContainer {
+        width: 50%;
+    }
+
+    .postHeader {
+        width: 90%;
+    }
+
+    .posts {
+        width: 90%;
+    }
+
+    .seeSaved,
+    .seeMyPosts,
+    .createPost {
+        margin-top: 55px;
+    }
+
+    .seeSaved{
+        left:10%;
+    }
+
+    .seeMyPosts{
+        left:5%;
+    }
+
+    .createPost a .postButton {
+        width: 150px;
+    }
+}
+
+@media (max-width: 1200px) {
+    .seeSaved{
+        left:5%;
+    }
+
+    .seeMyPosts{
+        left:2.5%;
+    }
+}
+
+@media (max-width: 1065px) {
+
+    .popupContainer {
+        width: 70%;
+    }
+
+    .seeSaved,
+    .seeMyPosts,
+    .createPost {
+        display: none;
+    }
+
+    .createPost:has(a) {
+        display: block;
+    }
+
+    .hamburgerButton {
+        display: block;
+        position: relative;
+        margin-top: 60px;
+        margin-left: auto;
+    }
+
+    .hamburgerButton img {
+        width: 50px;
+        cursor: pointer;
+    }
+
+    .hamburgerOptions {
+        position: absolute;
+        z-index: 999;
+        display: block;
+    }
+
+    .hamburgerOptions input {
+        position: relative;
+        right: 100px;
+    }
+}
+
+@media (max-width:930px) {
+
+    .postInfo{
+        justify-content: none;
+    }
+
+    .userInfo {
+        flex-wrap: wrap;
+        width: fit-content;
+    }
+    
+    .postUsername {
+        width: fit-content;
+    }
+
+    .postTags {
+        flex-basis: 100%; /* Ocupa toda la línea debajo de avatar y username */
+        justify-content: left;
+        margin-left: 0;
+        flex-wrap: wrap;
+        margin-top: 20px;
+        width: 100%;
+    }
+}
+
+@media (max-width: 770px) {
+
+    .analysesRecords {
+        width: 90%;
+    }
+
+    .summonerSearch {
+        width: 90%;
+    }
+
+    .summonerSearch input {
+        width: 60%;
+    }
+
+    .postSearch {
+        width: 80%;
+    }
+
+    .titleSearch {
+        width: 100%;
+    }
+    
+}
+
+@media (max-width: 635px) {
+
+    .likes,
+    .comments,
+    .delete {
+        margin-right: 15%;
+        width: 20%;
+    }
+
+    .returnSearch {
+        width: 50%;
+        margin-left: auto;
+        margin-right: auto;
+        height: 50px;
+    }
+
+    .postInfo {
+        display: block;
+    }
+
+    .pubDate {
+        margin-bottom: 30px;
+        margin-left: 5px;
+    }
+
+}
+
+@media (max-width: 475px) {
+    .summonerSearch input {
+        width: 50%;
+    }
+
+    .hamburgerButton {
+        margin-left: 5px;
+    }
+
+    .save {
+        width: 20%;
+    }
+
+    .postSearch input {
+        width: 100%;
+    }
+
+    .analysesRecords {
+        width: 100%;
+        padding: 20px 0px;
+    }
+
+    .summonerSearch input {
+        width: 40%;
+    }
 }

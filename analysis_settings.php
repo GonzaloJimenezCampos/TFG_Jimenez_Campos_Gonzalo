@@ -3,36 +3,45 @@
 include ("helpers.php");
 
 if (isset($_GET["username"]) && isset($_GET["regionCode"])) {
+
     $summonerName = urldecode($_GET["username"]);
     $regionCode = $_GET["regionCode"];
     $region = "europe";
     $summoner = getSummoner($summonerName, $region);
 
-    $accountId = getAccountId($summoner["puuid"], $regionCode)["id"];
+    if (isset($summoner["status"]["status_code"])) {
+        header("Location: index.php?alert=404Search&username=" . urlencode($summonerName));
+    } else {
+        $account = getAccountId($summoner["puuid"], $regionCode);
 
-    $summonerRank = getSummonerRanks($accountId, $regionCode);
-    $soloQueue = -1;
-    $flexQueue = -1;
+        if (isset($account["status"]["status_code"])) {
+            header("Location: index.php?alert=404Region&username=" . urlencode($summonerName));
+        } else {
+            $summonerRank = getSummonerRanks($account["id"], $regionCode);
+            $soloQueue = -1;
+            $flexQueue = -1;
 
-    for ($i = 0; $i < count($summonerRank); $i++) {
-        $queue = $summonerRank[$i]["queueType"];
-        switch ($queue) {
-            case "RANKED_FLEX_SR":
-                $flexQueue = $i;
-                $rankFlexQueue = ucfirst(strtolower($summonerRank[$flexQueue]["tier"]));
-                break;
-            case "RANKED_SOLO_5x5":
-                $soloQueue = $i;
-                $rankSoloQueue = ucfirst(strtolower($summonerRank[$soloQueue]["tier"]));
-                break;
+            for ($i = 0; $i < count($summonerRank); $i++) {
+                $queue = $summonerRank[$i]["queueType"];
+                switch ($queue) {
+                    case "RANKED_FLEX_SR":
+                        $flexQueue = $i;
+                        $rankFlexQueue = ucfirst(strtolower($summonerRank[$flexQueue]["tier"]));
+                        break;
+                    case "RANKED_SOLO_5x5":
+                        $soloQueue = $i;
+                        $rankSoloQueue = ucfirst(strtolower($summonerRank[$soloQueue]["tier"]));
+                        break;
+                }
+            }
+
+            $summonerRecognitionData = getSummonerRecognitionData($summoner["puuid"], $regionCode);
+
+            $summonerLastMatches = getSummonerMatchesIds($summoner["puuid"], 1, $region, null);
+
+            $data = json_decode(file_get_contents('./champion.json', true));
         }
     }
-
-    $summonerRecognitionData = getSummonerRecognitionData($summoner["puuid"], $regionCode);
-
-    $summonerLastMatches = getSummonerMatchesIds($summoner["puuid"], 1, $region, null);
-
-    $data = json_decode(file_get_contents('./champion.json', true));
 } else {
     header("Location: index.php?alert=401Search");
 }
@@ -57,8 +66,10 @@ if (isset($_GET["username"]) && isset($_GET["regionCode"])) {
 </head>
 
 <body>
+    <div class="alerts" id="alerts">
+    </div>
     <div class="container">
-        <div class="arrow"><a href="index.php?page=0"><img src="img/backwardsArrow.png"
+        <div class="arrow"><a href="index.php?page=0"><img src="img/cursor.png"
                     alt="Arrow that you can click to go to the main page"></a></div>
         <div class="summoner">
             <p class="isYou">Is this you? Try searching again</p>
@@ -70,8 +81,9 @@ if (isset($_GET["username"]) && isset($_GET["regionCode"])) {
                     <option value="la1">LAN</option>
                     <option value="la2">LAS</option>
                 </select>
+                <div class="separator"></div>
                 <input type="text" name="summoner" id="summoner" placeholder="Summoner name + #Tag"
-                    onkeypress="checkUserExistance(event)">
+                    onkeypress="checkUserExistance(event)" autocomplete="off">
             </div>
             <div class="summonerSummary">
                 <div class="summonerInfo">
@@ -88,9 +100,10 @@ if (isset($_GET["username"]) && isset($_GET["regionCode"])) {
                                 src="img/ranks/<?php echo $soloQueue != -1 ? $summonerRank[$soloQueue]["tier"] : "UNRANKED"; ?>.png"
                                 alt="Image of the rank"></div>
                         <div class="division">
-                            <?php echo ($soloQueue != -1 ? $rankSoloQueue . ($rankSoloQueue=="Challenger" || $rankSoloQueue=="Grandmaster" || $rankSoloQueue=="Master" ? "": " ".$summonerRank[$soloQueue]["rank"]) : "Unranked"); ?>
+                            <?php echo ($soloQueue != -1 ? $rankSoloQueue . ($rankSoloQueue == "Challenger" || $rankSoloQueue == "Grandmaster" || $rankSoloQueue == "Master" ? "" : " " . $summonerRank[$soloQueue]["rank"]) : "Unranked"); ?>
                         </div>
-                        <div class="lp"><?php echo $soloQueue != -1 ? $summonerRank[$soloQueue]["leaguePoints"]." LP" : ""; ?>
+                        <div class="lp">
+                            <?php echo $soloQueue != -1 ? $summonerRank[$soloQueue]["leaguePoints"] . " LP" : ""; ?>
                         </div>
                     </div>
                     <div class="queue">
@@ -99,9 +112,10 @@ if (isset($_GET["username"]) && isset($_GET["regionCode"])) {
                                 src="img/ranks/<?php echo $flexQueue != -1 ? $summonerRank[$flexQueue]["tier"] : "UNRANKED"; ?>.png"
                                 alt="Image of the rank"></div>
                         <div class="division">
-                            <?php echo $flexQueue != -1 ? $rankFlexQueue . ($rankFlexQueue=="Challenger" || $rankFlexQueue=="Grandmaster" || $rankFlexQueue=="Master" ? "": " ".$summonerRank[$flexQueue]["rank"]) : "Unranked"; ?>
+                            <?php echo $flexQueue != -1 ? $rankFlexQueue . ($rankFlexQueue == "Challenger" || $rankFlexQueue == "Grandmaster" || $rankFlexQueue == "Master" ? "" : " " . $summonerRank[$flexQueue]["rank"]) : "Unranked"; ?>
                         </div>
-                        <div class="lp"><?php echo $flexQueue != -1 ? $summonerRank[$flexQueue]["leaguePoints"]." LP" : ""; ?>
+                        <div class="lp">
+                            <?php echo $flexQueue != -1 ? $summonerRank[$flexQueue]["leaguePoints"] . " LP" : ""; ?>
                         </div>
                     </div>
                 </div>
@@ -142,8 +156,8 @@ if (isset($_GET["username"]) && isset($_GET["regionCode"])) {
                 <label for="matches">Number of matches: </label>
                 <input type="number" id="numberMatches" name="matches" min="1" max="20" oninput="isAnalysisReady()">
                 <div class="Queues">
-                    <input type="button" id="soloButton" value="Solo" active="0" onclick="toggleActive(this)">
-                    <input type="button" id="flexButton" value="Flex" active="0" onclick="toggleActive(this)">
+                    <div id="soloButton" value="Solo" active="0" onclick="toggleActive(this)">Solo</div>
+                    <div id="flexButton" value="Flex" active="0" onclick="toggleActive(this)">Flex</div>
                 </div>
             </div>
             <div class="championSelect">
@@ -154,7 +168,7 @@ if (isset($_GET["username"]) && isset($_GET["regionCode"])) {
                 </select>
                 <div class="championAutocomplete">
                     <div class="championSelection">
-                        <input type="text" id="championInput" oninput="autoCompleteChampion(this)" autocomplete="of">
+                        <input type="text" id="championInput" oninput="autoCompleteChampion(this)" autocomplete="off">
                     </div>
                     <div class="autocomplete-champions" id="autocomplete-champions"></div>
                 </div>
@@ -164,17 +178,25 @@ if (isset($_GET["username"]) && isset($_GET["regionCode"])) {
             <div class="selectedChampions" id="focusChampions" style="display: none;">
             </div>
             <div class="role" id="role">
-                <img src="img/roles/unselected.png" role="unselected" onmouseover="hoverRole(this)" onmouseout="unhoverRole(this)" onclick="showRoles()" id="roleImg">
+                <img src="img/roles/unselected.png" role="unselected" onmouseover="hoverRole(this)"
+                    onmouseout="unhoverRole(this)" onclick="showRoles()" id="roleImg">
             </div>
             <div class="roles" id="roles" style="display: none;">
-                <img src="img/roles/top.png" alt="" role="top" onmouseover="hoverRole(this)" onmouseout="unhoverRole(this)" onclick="selectRole(this)">
-                <img src="img/roles/jungle.png" alt="" role="jungle" onmouseover="hoverRole(this)" onmouseout="unhoverRole(this)" onclick="selectRole(this)">
-                <img src="img/roles/middle.png" alt="" role="middle" onmouseover="hoverRole(this)" onmouseout="unhoverRole(this)" onclick="selectRole(this)">
-                <img src="img/roles/bottom.png" alt="" role="bottom" onmouseover="hoverRole(this)" onmouseout="unhoverRole(this)" onclick="selectRole(this)">
-                <img src="img/roles/utility.png" alt="" role="utility" onmouseover="hoverRole(this)" onmouseout="unhoverRole(this)" onclick="selectRole(this)">
+                <img src="img/roles/top.png" alt="" role="top" onmouseover="hoverRole(this)"
+                    onmouseout="unhoverRole(this)" onclick="selectRole(this)">
+                <img src="img/roles/jungle.png" alt="" role="jungle" onmouseover="hoverRole(this)"
+                    onmouseout="unhoverRole(this)" onclick="selectRole(this)">
+                <img src="img/roles/middle.png" alt="" role="middle" onmouseover="hoverRole(this)"
+                    onmouseout="unhoverRole(this)" onclick="selectRole(this)">
+                <img src="img/roles/bottom.png" alt="" role="bottom" onmouseover="hoverRole(this)"
+                    onmouseout="unhoverRole(this)" onclick="selectRole(this)">
+                <img src="img/roles/utility.png" alt="" role="utility" onmouseover="hoverRole(this)"
+                    onmouseout="unhoverRole(this)" onclick="selectRole(this)">
             </div>
             <div class="analysisButtonContainer">
-            <button onclick="" id="analysisButton">ANALYZE</button>
+                <button
+                    onclick="customAlert('You need to select a number of matches, queue and role before analyzing', 2)"
+                    id="analysisButton">Analyze</button>
             </div>
         </div>
     </div>

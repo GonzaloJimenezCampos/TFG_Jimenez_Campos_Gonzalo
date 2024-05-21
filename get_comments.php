@@ -5,6 +5,32 @@ include ('lib.php');
 $connection = connect($server, $serveruser, $serverpassword, $PDOoptions);
 $commentsHTML = '';
 
+function calculateTimeAgo($date) {
+    $now = time(); // Fecha y hora actual en segundos
+    $timestamp = strtotime($date); // Convertir la fecha recibida a un timestamp
+    
+    // Calcular la diferencia en segundos
+    $difference = $now - $timestamp;
+
+    if ($difference < 60) { // Menos de un minuto
+        return "now";
+    } elseif ($difference < 3600) { // Menos de una hora
+        $minutes = round($difference / 60);
+        return "$minutes minutes ago";
+    } elseif ($difference < 86400) { // Menos de 24 horas
+        $hours = round($difference / 3600);
+        return "$hours hours ago";
+    } elseif ($difference < 2592000) { // Menos de un mes (30 días)
+        $days = round($difference / 86400);
+        return "$days days ago";
+    } elseif ($difference < 31536000) { // Menos de un año (365 días)
+        $months = round($difference / 2592000);
+        return "$months months ago";
+    } else { // Más de un año
+        $years = round($difference / 31536000);
+        return "$years years ago";
+    }
+}
 
 if (isset($_GET['order']) && $_GET['order'] == 'likes') {
     $sql = 'SELECT c.comment_id, c.comment_date, c.comment_body, u.user_id, COALESCE(u.username, "[deleted]") AS username, COALESCE(u.profile_image, "img/profile.png") AS profile_image, 
@@ -30,7 +56,7 @@ while ($regComment = $stmt->fetch()) {
         <div class="avatar"><img src="' . $regComment["profile_image"] . '" alt="Avatar of the user that made the comment"></div>
         <div class="postUsername">' . $regComment["username"] . '</div>
     </div>
-    <div class="pubDate">' . $regComment["comment_date"] . '</div>
+    <div class="pubDate">' . calculateTimeAgo($regComment["comment_date"]) . '</div>
 </div>
 <div class="postBody">' . $regComment["comment_body"] . '</div>
 <div class="interactions">

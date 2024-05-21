@@ -159,7 +159,9 @@ if ($numberOfMatchesToAnalyze == (int) $data["numberMatches"]) {
         $sql = 'INSERT INTO records (record_date, puuid, region, score, gold, damage, objectives, vision, kda, winrate, user_id) VALUES (NOW(), "' . $summoner["puuid"] . '", "' . $regionCode . '" ,' . number_format($totalScore, 0) . ', ' . number_format($totalGoldScore, 0) . ', ' . number_format($totalDamageScore, 0) . ', ' . number_format($totalObjectivesScore, 0) . ', ' . number_format($totalVisionScore, 0) . ', ' . number_format($totalKdaScore, 0) . ', ' . number_format($winrate, 0) . ', ' . $_SESSION["user_id"] . ')';
         $stmt = $connection->prepare($sql);
         $stmt->execute();
-        array_pop($_SESSION['records']);
+        if (sizeof($_SESSION['records'])>5){
+            array_pop($_SESSION['records']);
+        }
         $summonerIcon = getSummonerRecognitionData($summoner["puuid"], $regionCode)["profileIconId"];
         $summonerInfo = getSummonerName($summoner["puuid"], 'europe');
         $summonerName = $summonerInfo["gameName"] . "#" . $summonerInfo["tagLine"];

@@ -1,6 +1,7 @@
-/*Vista Desktop*/
+
 body {
     font-family: 'Karla', sans-serif;
+    background-color: #15191d;
 }
 
 h1{
@@ -16,7 +17,7 @@ p{
 }
 
 .headerContainer {
-    background-color: #8d4d4d;
+    background-color: #609EEB;
     min-height: 100px;
     width: 100%;
     position: fixed;
@@ -32,9 +33,26 @@ header {
     padding: 0px 60px;
 }
 
+.nabla-logo{
+    font-family: "Nabla", system-ui;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-size: 40px;
+    font-style: normal;
+    font-variation-settings:
+      "EDPT" 100,
+      "EHLT" 12;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+    user-select: none;
+}
+
+.nabla-logo:hover{
+    transform: scale(1.1); 
+}
+
 .username {
     position: relative;
-    color: #141414;
     right: 30px;
     bottom: 40px;
     font-weight: 700;
@@ -54,9 +72,104 @@ header {
 }
 
 .logInHeaderButton{
-    background-color: #165251;
+    background-color: #024da8;
     margin-left: 20px;
     color: #E1F2F2;
     padding: 10px 40px;
     border-radius: 12px;
+}
+
+.alerts{
+    z-index: 1000;
+    margin-top: 50px;
+    position: fixed;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    width: 36%;
+}
+
+/* The alert message box */
+.alert {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 20px;
+    margin-bottom: 10px;
+    border: 2px solid;
+    /* Red */
+    color: white;
+    border-radius: 5px;
+}
+
+/* The close button */
+.closebtn {
+    margin-left: 15px;
+    color: white;
+    font-weight: bold;
+    float: right;
+    font-size: 22px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* When moving the mouse over the close button */
+.closebtn:hover {
+    color: black;
+}
+
+.footerContainer{
+    margin: 0 auto;
+    margin-bottom: 70px;
+    width: 70%;
+    min-width: 800px;
+}
+
+.footer-separator{
+    height: 2px;
+    background-color: #d3dde9;
+    margin: 20px 0;
+}
+
+.footerContainer p{
+    text-align: center;
+    color: #FAFCFF;
+    margin-top: 20px;
+}
+
+@media (max-width: 820px){
+    .footerContainer{
+        min-width: 0px;
+        width: 80%;
+    }
+
+}
+
+@media (max-width: 600px){
+    .logInHeaderButton{
+        background-color: #024da8;
+        margin-left: 20px;
+        color: #E1F2F2;
+        padding: 10px 20px;
+    }
+
+    header {
+        padding: 0px 30px;
+    }
+}
+
+@media (max-width: 475px){
+    .username{
+        display: none;
+    }
+
+    .registerButton{
+        display: none;
+    }
+
+    .notificationsNumber{
+        margin-left: 70px;
+    }
 }

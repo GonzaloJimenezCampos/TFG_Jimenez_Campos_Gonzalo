@@ -33,6 +33,10 @@ if (isset($_POST["hard"]) && $_POST["hard"] == 1) {
     UPDATE comments SET user_id=NULL WHERE user_id=:user_id;';
 }
 
+if($_SESSION["user_id"]){
+
+}
+
 $sqlDelete .= 'DELETE FROM messages WHERE receiver_id = :user_id;
 UPDATE messages SET sender_id = NULL WHERE sender_id = :user_id;
 DELETE FROM users WHERE user_id=:user_id;';

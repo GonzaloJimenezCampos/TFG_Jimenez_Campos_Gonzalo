@@ -1,12 +1,15 @@
 .container {
     text-align: center;
     display: flex;
-    padding: 350px 130px 35px 200px;
+    padding: 400px 130px 35px 130px;
 }
 
 .registrationInfo{
     text-align: left;
     flex: 0.4;
+    color: #E1F2F2;
+    margin-right: 50px;
+    margin-left: 70px;
     margin-top: 30px;
 }
 
@@ -14,8 +17,8 @@
     margin-bottom: 20px;   
 }
 
-.body{
-
+.registrationForm .title{
+    display: none;
 }
 
 .registrationForm{
@@ -35,17 +38,86 @@ form{
 }
 
 input{
-    width: 200px;
-    margin-bottom: 40px;
+    max-width: 190px;
+    height: 44px;
+    background-color:#E1F2F2;
+    border-radius: .5rem;
+    padding: 0 1rem;
+    border: 2px solid transparent;
+    font-size: 1rem;
+    transition: border-color .3s cubic-bezier(.25,.01,.25,1) 0s, color .3s cubic-bezier(.25,.01,.25,1) 0s,background .2s cubic-bezier(.25,.01,.25,1) 0s;
+    margin-bottom: 20px;
 }
 
 .submitButton{
-    background-color: #165251;
+    background-color: #609EEB;
     color: #E1F2F2;
     padding: 10px 40px;
     border-radius: 12px;
 }
 
-a{
-    color: black;
+p{
+    color: #E1F2F2;
+}
+.container a{
+    margin-top: 20px;
+    border-bottom: 1px solid #E1F2F2;
+}
+
+@media (max-width: 1130px){
+    .registrationInfo{
+        text-align: left;
+        flex: 1;
+        color: #E1F2F2;
+        width: 200px;
+        margin-right: 100px;
+        margin-top: 30px;
+    }
+    
+    .registrationForm{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex: 0.6;
+    }
+}
+
+@media (max-width: 975px){
+
+    .container {
+        padding-top: 350px;
+    }
+
+    .registrationForm .title{
+        display: block;
+        color: #E1F2F2;
+    }
+
+    .registrationInfo .title{
+        display: none;
+    }
+
+    .registrationInfo{
+        margin: auto 0;
+        margin-right: 100px;
+    }
+}
+
+@media (max-width: 830px){
+    .registrationInfo{
+        display: none;
+    }
+
+    .registrationForm{
+        flex: 1;
+        width: 100%;
+    }
+
+    .registrationForm .title{
+        width: 300px;
+    }
+
+    .registrationForm p{
+        min-width: 196px;
+    }
 }

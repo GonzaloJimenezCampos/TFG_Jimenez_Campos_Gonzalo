@@ -7,6 +7,15 @@ include('lib.php');
 if (!isset($_SESSION['token'])) {
     $_SESSION['token'] = bin2hex(random_bytes(32));
 }
+
+$alert = "";
+
+if (isset($_GET["error"])) {
+    if ($_GET["error"] == "login") {
+        $alert = "<script> customAlert('The username or the password does not match', 0) </script>";
+    }
+}
+
 $token = $_SESSION['token'];
 ?>
 
@@ -25,15 +34,18 @@ $token = $_SESSION['token'];
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;700&family=Oswald:wght@400;700&display=swap"
         rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nabla&display=swap" rel="stylesheet">
 </head>
 
 <body>
     <div w3-include-html="userless_header.html"></div>
+    <div class="alerts" id="alerts">
+    </div>
     <div class="container">
         <h1>LOG IN</h1>
         <form action="login_control.php" method="POST">
             <input type="hidden" name="token" value="<?php echo $token; ?>">
-            <input type="text" name="username" id="username" placeholder="Username">
+            <input type="text" name="username" id="username" placeholder="Username" autocomplete="off">
             <input type="password" name="password" id="password" placeholder="Password">
             <input type="submit" class="submitButton" value="Log in">
         </form>
@@ -42,6 +54,7 @@ $token = $_SESSION['token'];
     <script src="https://code.jquery.com/jquery-3.7.1.js"
         integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
     <script src="scripts.js"></script>
+    <?php echo $alert ?>
 </body>
 
 </html>
