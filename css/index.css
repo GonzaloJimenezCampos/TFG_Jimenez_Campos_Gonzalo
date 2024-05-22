@@ -834,6 +834,10 @@ input:focus {
         width: 20%;
     }
 
+    .createPost a{
+        display: none;
+    }
+
     .returnSearch {
         width: 50%;
         margin-left: auto;
