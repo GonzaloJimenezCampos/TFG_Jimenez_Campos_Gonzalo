@@ -330,7 +330,6 @@ function changeUsername(event) {
           if (response === "success") {
             event.target.defaultValue = newUsername;
             location.reload();
-            customAlert("Username changed succesfully", 1);
           } else {
             customAlert("Something went wrong, please try again", 0);
           }
