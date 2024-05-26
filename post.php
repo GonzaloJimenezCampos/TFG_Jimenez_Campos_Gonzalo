@@ -12,6 +12,10 @@ if (isset($_SESSION["user_id"])) {
 $stmt = $connection->prepare($sql);
 $stmt->bindParam(':post_id', $_GET["post"], PDO::PARAM_STR);
 $stmt->execute();
+$post404 = false;
+if (!($reg = $stmt->fetch())) {
+    $post404 = true;
+}
 
 $sqlComments = 'SELECT c.comment_id, c.comment_date, c.comment_body, u.user_id, COALESCE(u.username, "[deleted]") AS username, COALESCE(u.profile_image, "img/profile.png") AS profile_image, 
 c.post_id, IF(lc.user_id IS NOT NULL, 1, 0) AS user_liked, COALESCE(lc_count.likes_count, 0) AS likes FROM Comments c LEFT JOIN Users u ON c.user_id = u.user_id 
@@ -58,7 +62,8 @@ function calculateTimeAgo($date)
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gonzalo Jiménez - Porfolio</title>
+    <title><?php echo ($post404 ? "Post not found" : $reg["post_title"]) ?></title>
+    <link rel="icon" type="image/x-icon" href="img/favicon.png">
     <link rel="stylesheet" href="css/css-reset.css">
     <link rel="stylesheet" href="css/general.css">
     <link rel="stylesheet" href="css/post.css">
@@ -78,7 +83,7 @@ function calculateTimeAgo($date)
     </div>
     
         <?php
-        if (!($reg = $stmt->fetch())) {
+        if ($post404) {
             echo '<div class="container" style="background-color: #15191d">
             <div class="error"><h1>ERROR 404</h1></div>
             <div class="errorDescription">The post you were looking for does no longer exists (or never existed)</div>
