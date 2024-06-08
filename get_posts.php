@@ -130,11 +130,11 @@ while ($reg = $stmt->fetch()) {
 $postsHTML .= '<div class="loadMore">
 <div>';
 if ($actualPage > 1) {
-    $postsHTML .= '<img src="img/left_arrow.png" alt="" onclick="getPosts(25, ' . ($actualPage - 1) . ', \'' . $_GET['order'] . '\', ' . (isset($_GET["title"]) ? "'" . $_GET["title"] . "'" : null) . ')">';
+    $postsHTML .= '<img src="img/left_arrow.png" alt="" onclick="getPosts(10, ' . ($actualPage - 1) . ', \'' . $_GET['order'] . '\', ' . (isset($_GET["title"]) ? "'" . $_GET["title"] . "'" : null) . ')">';
 }
 $postsHTML .= '<p>page ' . $actualPage . ' of ' . $totalPostPages . '</p>';
 if ($actualPage < $totalPostPages) {
-    $postsHTML .= '<img src="img/right_arrow.png" alt="" onclick="getPosts(25, ' . ($actualPage + 1) . ', \'' . $_GET['order'] . '\', ' . (isset($_GET["title"]) ? "'" . $_GET["title"] . "'" : null) . ')">';
+    $postsHTML .= '<img src="img/right_arrow.png" alt="" onclick="getPosts(10, ' . ($actualPage + 1) . ', \'' . $_GET['order'] . '\', ' . (isset($_GET["title"]) ? "'" . $_GET["title"] . "'" : null) . ')">';
 }
 
 $postsHTML .= '</div>
