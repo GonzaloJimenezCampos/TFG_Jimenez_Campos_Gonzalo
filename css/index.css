@@ -681,6 +681,10 @@ input:focus {
     cursor: pointer;
 }
 
+.loadMore p{
+    margin-top: 5px;
+}
+
 .returnSearch {
     color: #FAFCFF;
     margin-top: 30px;

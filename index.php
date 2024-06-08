@@ -29,7 +29,7 @@ if (isset($_GET["postPage"])) {
 }
 
 $actualPage = 1;
-$initialPostSearch = 25;
+$initialPostSearch = 10;
 
 $sqlPostAmount = 'SELECT COUNT(1) AS postNumber FROM Posts';
 $stmtPostAmount = $connection->prepare($sqlPostAmount);
@@ -135,7 +135,7 @@ function calculateTimeAgo($date)
                                 </div>
                                 <label for="body">Post body</label>
                                 <textarea id="body" name="body" placeholder="Write what you want to share here..."
-                                    maxlength="2000" required></textarea>
+                                    maxlength="20000" required></textarea>
                                 <button type="submit" onclick="createPost(event)">Publish</button>
                             </form>
                         </div>
@@ -253,7 +253,7 @@ function calculateTimeAgo($date)
                                     </select>
                                 </div>
                                 <div class="dateLimit" id="dateLimit" style="display: none;"><select id="maxDate"
-                                        name="maxDate" onchange="getPosts(25,1,null, null)">
+                                        name="maxDate" onchange="getPosts(10,1,null, null)">
                                         <option value="1">Today</option>
                                         <option value="7">Last week</option>
                                         <option value="30">Last month</option>
@@ -268,10 +268,10 @@ function calculateTimeAgo($date)
                         <?php
                         if (isset($_SESSION["user_id"])) {
                             echo '<div class="seeSaved" id="seeSaved">
-                                <input type="submit" class="savedButton" id="savedButton" onclick="getPosts(25,1,\'saved\', null)" value="See saved posts">
+                                <input type="submit" class="savedButton" id="savedButton" onclick="getPosts(10,1,\'saved\', null)" value="See saved posts">
                             </div>
                             <div class="seeMyPosts" id="seeMyPosts">
-                                <input type="submit" class="myPostsButton" id="myPostsButton" onclick="getPosts(25,1,\'myPosts\', null)" value="See my posts">
+                                <input type="submit" class="myPostsButton" id="myPostsButton" onclick="getPosts(10,1,\'myPosts\', null)" value="See my posts">
                             </div>
                             <div class="createPost">
                                 <input type="submit" class="postButton" id="openPopup" onclick="openPopUp()" value="Write a post">
@@ -279,8 +279,8 @@ function calculateTimeAgo($date)
                             <div class="hamburgerButton" id="hamburgerButton">
                                 <img src="img/burgerButton.png" onclick="burgerMenu()">
                                 <div class="hamburgerOptions">
-                                    <input type="submit" class="savedButton" id="savedButton" onclick="getPosts(25,1,\'saved\', null)" value="See saved posts" style="display: none;">
-                                    <input type="submit" class="myPostsButton" id="myPostsButton" onclick="getPosts(25,1,\'myPosts\', null)" value="See my posts" style="display: none;">
+                                    <input type="submit" class="savedButton" id="savedButton" onclick="getPosts(10,1,\'saved\', null)" value="See saved posts" style="display: none;">
+                                    <input type="submit" class="myPostsButton" id="myPostsButton" onclick="getPosts(10,1,\'myPosts\', null)" value="See my posts" style="display: none;">
                                     <input type="submit" class="postButton" id="openPopup" onclick="openPopUp()" value="Write a post" style="display: none;">
                                 </div>
                             </div>';

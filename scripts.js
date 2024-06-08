@@ -490,7 +490,7 @@ function toggleDateLimit() {
   } else {
     dateLimit.style.display = "none";
   }
-  getPosts(25, 1, null, null);
+  getPosts(10, 1, null, null);
 }
 
 function getPosts(initialPostSearch, actualPage, order, title) {
@@ -679,7 +679,7 @@ function showAutocompleteListPosts(posts) {
     item.classList.add("autocomplete-post");
     item.textContent = post;
     item.addEventListener("click", function () {
-      getPosts(25, 1, "autoComplete", post);
+      getPosts(10, 1, "autoComplete", post);
       hideAutocompleteListPosts();
     });
     listaAutocompletado.appendChild(item);
@@ -691,7 +691,7 @@ function searchPersonalTitlePost(event) {
   if (event.key === 'Enter') {
     var postTitle = event.target.value;
     hideAutocompleteListPosts();
-    getPosts(25, 1, "autoComplete", postTitle);
+    getPosts(10, 1, "autoComplete", postTitle);
   }
 }
 
